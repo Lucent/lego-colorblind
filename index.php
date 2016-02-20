@@ -4,9 +4,12 @@ $similar_colors = [
 	[2, 70, 308, 320]
 ];
 
-if (array_key_exists("set", $_GET))
-	$set_number = $_GET["set"];
-else {
+if (array_key_exists("set", $_GET)) {
+	if (strpos($_GET["set"], "-"))
+		$set_number = $_GET["set"];
+	else
+		$set_number = $_GET["set"] . "-1";
+} else {
 ?>
 <form method="get" action=".">
  <input type="text" name="set" placeholder="Set ID">
@@ -25,7 +28,7 @@ $request = "http://rebrickable.com/api/get_set_parts?" . http_build_query($reque
 //echo $request;
 $set_json = json_decode(file_get_contents($request), true);
 if (strlen($set_json) === 0) {
-	echo "Invalid set ID (forgot the -1?)";
+	echo "Invalid set ID";
 	exit;
 }
 
