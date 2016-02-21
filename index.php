@@ -18,6 +18,7 @@ if (array_key_exists("set", $_GET)) {
 		$set_number = $_GET["set"] . "-1";
 } else {
 ?>
+<h1>Find parts that occur in multiple similar colors</h1>
 <form method="get" action=".">
  <input type="text" name="set" placeholder="Set ID">
  <input type="submit" value="Show similar colors">
@@ -32,7 +33,6 @@ $request_params = [
 	"set" => $set_number
 ];
 $request = "http://rebrickable.com/api/get_set_parts?" . http_build_query($request_params);
-//echo $request;
 $set_json = json_decode(file_get_contents($request), true);
 if (count($set_json) === 0) {
 	echo "Invalid set ID";
@@ -61,11 +61,11 @@ foreach ($parts_bydesign as $key1=>$color_pair) {
 foreach ($parts_bydesign as $color_pair) {
 //	print_r($color_pair);
 	foreach($color_pair as $part) {
-		echo "<h2>" . $part[0]["part_name"] . "</h2>\n";
+		echo "\n<h2>" . $part[0]["part_name"] . "</h2>\n";
 		foreach ($part as $color)
 			echo "<div><img src='" . $color["part_img_url"] . "'><br><span>" . $color["color_name"] . " (" .  $color["qty"] . ")</span></div>\n";
 	}
 }
 ?>
-</body>
+ </body>
 </html>
