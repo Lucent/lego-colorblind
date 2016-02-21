@@ -1,7 +1,8 @@
 <pre><?
 require "apikey.php";
 $similar_colors = [
-	[2, 70, 308, 320]
+	[2, 70, 308, 320],
+	[14, 25, 27]
 ];
 
 if (array_key_exists("set", $_GET)) {
@@ -27,7 +28,7 @@ $request_params = [
 $request = "http://rebrickable.com/api/get_set_parts?" . http_build_query($request_params);
 //echo $request;
 $set_json = json_decode(file_get_contents($request), true);
-if (strlen($set_json) === 0) {
+if (count($set_json) === 0) {
 	echo "Invalid set ID";
 	exit;
 }
@@ -35,16 +36,25 @@ if (strlen($set_json) === 0) {
 $set = $set_json[0];
 echo $set["descr"] . "\n\n";
 
-$unique_similar_colors = call_user_func_array("array_merge", $similar_colors);
-//print_r($similar_colors);
-foreach ($set["parts"] as $part) {
-	if (in_array($part["ldraw_color_id"], $unique_similar_colors) && $part["type"] == 1)
-		$parts_bydesign[$part["part_id"]][] = $part;
+$parts_bydesign = [];
+foreach ($similar_colors as $color_pair_idx=>$color_pairs) {
+	foreach ($set["parts"] as $part) {
+		if (in_array($part["ldraw_color_id"], $color_pairs) && $part["type"] == 1)
+			$parts_bydesign[$color_pair_idx][$part["part_id"]][] = $part;
+	}
 }
 
-foreach ($parts_bydesign as $part) {
-	if (count($part) > 1) {
-//		print_r($part);
+// Clear out parts that aren't in multiple confusing colors
+foreach ($parts_bydesign as $key1=>$color_pair) {
+	foreach ($color_pair as $key2=>$part) {
+		if (count($part) === 1)
+			unset($parts_bydesign[$key1][$key2]);
+	}
+}
+
+foreach ($parts_bydesign as $color_pair) {
+//	print_r($color_pair);
+	foreach($color_pair as $part) {
 		echo $part[0]["part_name"] . " comes in ";
 		$colors = [];
 		foreach ($part as $color)
