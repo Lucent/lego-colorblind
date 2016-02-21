@@ -4,7 +4,7 @@
   <link href="css/screen-default.css" rel="stylesheet" type="text/css">
  </head>
  <body>
-<pre><?
+<?
 require "apikey.php";
 $similar_colors = [
 	[2, 70, 308, 320],
@@ -40,7 +40,7 @@ if (count($set_json) === 0) {
 }
 
 $set = $set_json[0];
-echo $set["descr"] . "\n\n";
+echo "<h1>" . $set["descr"] . "</h1>\n\n";
 
 $parts_bydesign = [];
 foreach ($similar_colors as $color_pair_idx=>$color_pairs) {
@@ -61,16 +61,11 @@ foreach ($parts_bydesign as $key1=>$color_pair) {
 foreach ($parts_bydesign as $color_pair) {
 //	print_r($color_pair);
 	foreach($color_pair as $part) {
-		echo $part[0]["part_name"] . " comes in ";
-		$colors = [];
-		foreach ($part as $color) {
-			$colors[] = $color["color_name"];
-			echo "<div><img src='" . $color["part_img_url"] . "'></div>";
-		}
-		echo implode(" and ", $colors) . "\n";
+		echo "<h2>" . $part[0]["part_name"] . "</h2>\n";
+		foreach ($part as $color)
+			echo "<div><img src='" . $color["part_img_url"] . "'><br><span>" . $color["color_name"] . " (" .  $color["qty"] . ")</span></div>\n";
 	}
 }
 ?>
-</pre>
 </body>
 </html>
