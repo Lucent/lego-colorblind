@@ -1,3 +1,9 @@
+<html>
+ <head>
+  <title>Differentiate Similar Color Lego Parts for Colorblindness</title>
+  <link href="css/screen-default.css" rel="stylesheet" type="text/css">
+ </head>
+ <body>
 <pre><?
 require "apikey.php";
 $similar_colors = [
@@ -57,9 +63,14 @@ foreach ($parts_bydesign as $color_pair) {
 	foreach($color_pair as $part) {
 		echo $part[0]["part_name"] . " comes in ";
 		$colors = [];
-		foreach ($part as $color)
+		foreach ($part as $color) {
 			$colors[] = $color["color_name"];
+			echo "<div><img src='" . $color["part_img_url"] . "'></div>";
+		}
 		echo implode(" and ", $colors) . "\n";
 	}
 }
-?></pre>
+?>
+</pre>
+</body>
+</html>
