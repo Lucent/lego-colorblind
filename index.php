@@ -30,13 +30,14 @@ $similar_colors = [
 ];
 
 function get_set_json($id, $api_key) {
+	$cache_folder = "cache" . DIRECTORY_SEPARATOR;
 	$request_params = [
 		"key" => $api_key,
 		"format" => "json",
 		"set" => $id
 	];
 
-	$cache_file = "cache" . DIRECTORY_SEPARATOR . $id;
+	$cache_file = $cache_folder . $id;
 	if (file_exists($cache_file)) {
 		$fh = fopen($cache_file, "r");
 		$file_time = trim(fgets($fh));
@@ -50,6 +51,7 @@ function get_set_json($id, $api_key) {
 
 	$request = "http://rebrickable.com/api/get_set_parts?" . http_build_query($request_params);
 	$set_json = file_get_contents($request);
+	write_cache_miss($cache_folder . "cache_miss", $id);
 
 	if ($set_json == "NOSET")
 		return false;
@@ -60,6 +62,12 @@ function get_set_json($id, $api_key) {
 		fclose($fh);
 		return $set_json;
 	}
+}
+
+function write_cache_miss($file, $set_id) {
+	$fh = fopen($file, "a");
+	fwrite($fh, time() . "\t" . $set_id . "\n");
+	fclose($fh);
 }
 
 $similar_color_bank = $similar_colors["Families"];
