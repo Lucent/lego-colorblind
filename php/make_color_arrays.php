@@ -30,7 +30,7 @@ print_r($_POST["similar_colors"]);
   var similar = [[]];
   for (var x = 0; x < ldraw_colors.length; x++) {
   	for (var y = x + 1; y < ldraw_colors.length; y++) {
-		if (cie1994(color.matrix(ldraw_colors[x].RGB,color.matrix_r.Blind("Deuteranomaly")), color.matrix(ldraw_colors[y].RGB,color.matrix_r.Blind("Deuteranomaly"))) < 10)
+		if (cie1994(color_transform(ldraw_colors[x].RGB, "Deuteranomaly"), color_transform(ldraw_colors[y].RGB, "Deuteranomaly")) < 10)
 			add_color_pair(similar, ldraw_colors[x].LD, ldraw_colors[y].LD);
 	}
   }
