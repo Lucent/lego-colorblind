@@ -17,6 +17,7 @@ if (!empty($_POST)) {
   <script src="../js/daltonize.js"></script>
   <script src="../js/delta_e.js"></script>
   <script>
+  var THRESHOLD = 7;
   function find_in_arrays(haystack, needle) {
 	for (var x = 0; x < haystack.length; x++)
 		if (haystack[x].indexOf(needle) !== -1)
@@ -24,11 +25,23 @@ if (!empty($_POST)) {
 	return false;
   }
 
+  function remove_duplicates(arr) {
+  }
+
   function add_color_pair(similar, first, second) {
   	var first_found = find_in_arrays(similar, first);
   	var second_found = find_in_arrays(similar, second);
 
-	if (first_found !== false) {
+	if (first_found !== false && second_found !== false && first_found !== second_found) {
+		var combined = similar[first_found].concat(similar[second_found]);
+		var uniquearr = combined.filter(function(item, pos, self) {
+			return self.indexOf(item) == pos;
+		});
+		similar.splice(first_found, 1);
+		similar.splice(second_found, 1);
+		similar.push(uniquearr);
+	}
+	else if (first_found !== false) {
 		if (similar[first_found].indexOf(second) === -1)
 			similar[first_found].push(second);
 	} else if (second_found !== false) {
@@ -43,7 +56,7 @@ if (!empty($_POST)) {
   	var similar = [];
 	for (var x = 0; x < ldraw_colors.length; x++) {
 	  	for (var y = x + 1; y < ldraw_colors.length; y++) {
-			if (cie1994(color_transform(ldraw_colors[x].RGBA, blindness_type), color_transform(ldraw_colors[y].RGBA, blindness_type)) < 10)
+			if (cie1994(color_transform(ldraw_colors[x].RGBA, blindness_type), color_transform(ldraw_colors[y].RGBA, blindness_type)) < THRESHOLD)
 				add_color_pair(similar, ldraw_colors[x].LD, ldraw_colors[y].LD);
 		}
 	}

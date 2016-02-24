@@ -63,7 +63,6 @@ function write_cache_miss($file, $set_id) {
 	fclose($fh);
 }
 
-$similar_color_bank = $similar_colors["Families"];
 if (array_key_exists("type", $_GET))
 	if (array_key_exists($_GET["type"], $similar_colors))
 		$similar_color_bank = $similar_colors[$_GET["type"]];
@@ -90,10 +89,12 @@ echo "<h1><img src='" . $set["set_img_url"] .  "'>" . htmlspecialchars_decode($s
  <input type="text" name="set" placeholder="Set ID" value="<?= $set_number ?>">
 </h1>
 Show colors that might be confused
+<select name="type">
 <?
 foreach ($similar_colors as $blindness_type=>$color_set)
-	echo "<input type='radio' name='type' value='$blindness_type' id='$blindness_type' ", $_GET["type"] == $blindness_type ? "checked" : "", "><label for='$blindness_type'>$blindness_type</label>\n";
+	echo "<option value='$blindness_type'", $_GET["type"] == $blindness_type ? " selected" : "", ">$blindness_type</option>\n";
 ?>
+</select>
 <input type="submit" value="Show similarly colored parts">
 </form>
 
