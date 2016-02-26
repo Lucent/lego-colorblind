@@ -14,7 +14,6 @@ if (!empty($_POST)) {
  <head>
   <title>Differentiate Similar Color Lego Parts for Colorblindness</title>
   <script src="../php/ldraw_to_array.php"></script>
-  <script src="../js/daltonize.js"></script>
   <script src="../js/delta_e.js"></script>
   <script>
   var THRESHOLD = 7;
