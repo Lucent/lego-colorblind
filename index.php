@@ -23,6 +23,30 @@ $similar_colors["Rebrickable"] = [
 	[1004, 1005]
 ];
 
+$blindnesses = [
+	"Normal" => [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,1,0, 0,0,0,0,1],
+	"Protanopia" => [0.567,0.433,0,0,0, 0.558,0.442,0,0,0, 0,0.242,0.758,0,0, 0,0,0,1,0, 0,0,0,0,1],
+	"Protanomaly" => [0.817,0.183,0,0,0, 0.333,0.667,0,0,0, 0,0.125,0.875,0,0, 0,0,0,1,0, 0,0,0,0,1],
+	"Deuteranopia" => [0.625,0.375,0,0,0, 0.7,0.3,0,0,0, 0,0.3,0.7,0,0, 0,0,0,1,0, 0,0,0,0,1],
+	"Deuteranomaly" => [0.8,0.2,0,0,0, 0.258,0.742,0,0,0, 0,0.142,0.858,0,0, 0,0,0,1,0, 0,0,0,0,1],
+	"Tritanopia" => [0.95,0.05,0,0,0, 0,0.433,0.567,0,0, 0,0.475,0.525,0,0, 0,0,0,1,0, 0,0,0,0,1],
+	"Tritanomaly" => [0.967,0.033,0,0,0, 0,0.733,0.267,0,0, 0,0.183,0.817,0,0, 0,0,0,1,0, 0,0,0,0,1],
+	"Achromatopsia" => [0.299,0.587,0.114,0,0, 0.299,0.587,0.114,0,0, 0.299,0.587,0.114,0,0, 0,0,0,1,0, 0,0,0,0,1],
+	"Achromatomaly" => [0.618,0.320,0.062,0,0, 0.163,0.775,0.062,0,0, 0.163,0.320,0.516,0,0, 0,0,0,1,0, 0,0,0,0]
+];
+
+function color_transform($o, $matrix) {
+	global $blindnesses;
+	$m = $blindnesses[$matrix];
+
+    $r = (($o[0]*$m[0])+($o[1]*$m[1])+($o[2]*$m[2])+($o[3]*$m[3])+$m[4]);
+    $g = (($o[0]*$m[5])+($o[1]*$m[6])+($o[2]*$m[7])+($o[3]*$m[8])+$m[9]);
+    $b = (($o[0]*$m[10])+($o[1]*$m[11])+($o[2]*$m[12])+($o[3]*$m[13])+$m[14]);
+    $a = (($o[0]*$m[15])+($o[1]*$m[16])+($o[2]*$m[17])+($o[3]*$m[18])+$m[19]);
+
+    return [$r<0?0:($r<255?$r:255), $g<0?0:($g<255?$g:255), $b<0?0:($b<255?$b:255), $a<0?0:($a<255?$a:255)];
+};
+
 function get_set_json($id, $api_key) {
 	$cache_folder = "cache" . DIRECTORY_SEPARATOR;
 	$request_params = [
@@ -65,8 +89,8 @@ function write_cache_miss($file, $set_id) {
 }
 
 if (array_key_exists("type", $_GET))
-	if (array_key_exists($_GET["type"], $similar_colors))
-		$similar_color_bank = $similar_colors[$_GET["type"]];
+	if (array_key_exists($_GET["type"], $blindnesses))
+		$similar_color_bank = $_GET["type"];
 
 if (array_key_exists("set", $_GET)) {
 	if (strpos($_GET["set"], "-"))
@@ -92,7 +116,7 @@ echo "<h1><img src='" . $set["set_img_url"] .  "'>" . htmlspecialchars_decode($s
 Show colors that might be confused
 <select name="type">
 <?
-foreach ($similar_colors as $blindness_type=>$color_set)
+foreach ($blindnesses as $blindness_type=>$color_set)
 	echo "<option value='$blindness_type'", $_GET["type"] == $blindness_type ? " selected" : "", ">$blindness_type</option>\n";
 ?>
 </select>
@@ -100,13 +124,13 @@ foreach ($similar_colors as $blindness_type=>$color_set)
 </form>
 
 <?
-function make_similar_color_list($colors) {
+function make_similar_color_list($bank, $colors) {
 	global $ldraw_colors;
-	$THRESHOLD = 20;
+	$THRESHOLD = 10; // Use 20 and 10197 to diagnose chaining, 6 pairs of chains
 	$similar_lists = [];
 	for ($x = 0; $x < count($colors); $x++) {
 		for ($y = $x + 1; $y < count($colors); $y++) {
-			$color_difference = (new color_difference())->deltaECIE2000($ldraw_colors[$colors[$x]]["RGBA"], $ldraw_colors[$colors[$y]]["RGBA"]);
+			$color_difference = (new color_difference())->deltaECIE2000(color_transform($ldraw_colors[$colors[$x]]["RGBA"], $bank), color_transform($ldraw_colors[$colors[$y]]["RGBA"], $bank));
 //			echo "comparing ", $ldraw_colors[$colors[$x]]["Name"], " and ", $ldraw_colors[$colors[$y]]["Name"], " diff: ", $color_difference, "\n";
 			if ($color_difference < $THRESHOLD)
 				add_color_pair($similar_lists, $colors[$x], $colors[$y]);
@@ -155,7 +179,7 @@ foreach ($parts_bydesign as $key=>&$design)
 
 // Make similar color banks for each part
 foreach ($parts_bydesign as $design) {
-	$similar_color_lists = make_similar_color_list(array_column($design, "ldraw_color_id"));
+	$similar_color_lists = make_similar_color_list($similar_color_bank, array_column($design, "ldraw_color_id"));
 	if (count($similar_color_lists)) {
 		echo "\n<h2>" . $design[0]["part_name"] . "</h2>\n";
 		foreach($similar_color_lists as $color_list) {
@@ -168,27 +192,6 @@ foreach ($parts_bydesign as $design) {
 		}
 	}
 }
-
-
-
-
-
-/*
-
-foreach ($similar_color_bank as $color_pair_idx=>$color_pairs) {
-	foreach ($set["parts"] as $part) {
-		if (in_array($part["ldraw_color_id"], $color_pairs) && $part["type"] == 1)
-			$parts_bydesign[$color_pair_idx][$part["part_id"]][] = $part;
-	}
-}
-
-foreach ($parts_bydesign as $color_pair) {
-	foreach($color_pair as $part) {
-		echo "\n<h2>" . $part[0]["part_name"] . "</h2>\n";
-		foreach ($part as $color)
-			echo "<div><img src='" . $color["part_img_url"] . "'><br><span>" . $color["color_name"] . " (" .  $color["qty"] . ")</span></div>\n";
-	}
-}*/
 ?>
  </body>
 </html>
