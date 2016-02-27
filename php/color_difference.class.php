@@ -2,8 +2,12 @@
 class color_difference {
 
     public function deltaECIE2000 ($rgb1, $rgb2) {
+		global $darken_factor;
         list($l1, $a1, $b1) = $this->_rgb2lab($rgb1);
         list($l2, $a2, $b2) = $this->_rgb2lab($rgb2);
+
+		$l1 = max(0, $l1 - $darken_factor);
+		$l2 = max(0, $l2 - $darken_factor);
 
         $avg_lp     = ($l1 + $l2) / 2;
         $c1         = sqrt(pow($a1, 2) + pow($b1, 2));

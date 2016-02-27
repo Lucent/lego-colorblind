@@ -16,6 +16,10 @@ if (array_key_exists("type", $_GET))
 	if (array_key_exists($_GET["type"], $blindnesses))
 		$similar_color_bank = $_GET["type"];
 
+if (array_key_exists("dark", $_GET))
+	if (is_numeric($_GET["dark"]))
+		$darken_factor = $_GET["dark"];
+
 if (array_key_exists("set", $_GET)) {
 	if (strpos($_GET["set"], "-"))
 		$set_number = $_GET["set"];
@@ -36,13 +40,14 @@ if (array_key_exists("set", $_GET)) {
   <img src="<?= $set["set_img_url"] ?>"><?= htmlspecialchars_decode($set["descr"]) ?>
   <input type="text" name="set" placeholder="Set ID" value="<?= $set_number ?>">
  </h1>
-Show colors that might be confused
+Show colors that might be confused with
 <select name="type">
 <?
 foreach ($blindnesses as $blindness_type=>$color_set)
 	echo "<option value='$blindness_type'", $_GET["type"] == $blindness_type ? " selected" : "", ">$blindness_type</option>\n";
 ?>
-</select>
+</select>.<br>
+<input type="checkbox" name="dark" id="Dark" value="50" <?= array_key_exists("dark", $_GET) ? "checked" : "" ?>> <label for="Dark">Simulate dim lighting</label><br>
 <input type="submit" value="Show similarly colored parts">
 </form>
 
