@@ -21,25 +21,49 @@ if (array_key_exists("dark", $_GET))
 		$darken_factor = $_GET["dark"];
 
 if (array_key_exists("set", $_GET)) {
-	if (strpos($_GET["set"], "-"))
-		$set_number = $_GET["set"];
+	if (strpos($_GET["set"], ","))
+		$sets = explode(",", $_GET["set"]);
 	else
-		$set_number = $_GET["set"] . "-1";
+		$sets = explode(" ", $_GET["set"]);
 
-	$set_json = json_decode(get_set_json($set_number, $api_key), true);
-	if ($set_json === FALSE) {
-		echo "Invalid set ID";
-		exit;
-	} else
-		$set = $set_json[0];
+	$set_numbers = [];
+	foreach ($sets as $set)
+		$set_numbers[] = clean_set_number($set);
+
+	$set = [];
+	foreach ($set_numbers as $set_number) {
+		$set_json = json_decode(get_set_json($set_number, $api_key), true);
+		if ($set_json === FALSE)
+			echo "Invalid set ID ", $set_number;
+		else
+			$set[] = $set_json[0];
+	}
 }
+
+$parts_byelement = [];
+foreach ($set as $set_json) {
+	foreach ($set_json["parts"] as $part) {
+		if ($part["type"] === 1) {
+			if (array_key_exists($part["element_id"], $parts_byelement))
+				$parts_byelement[$part["element_id"]]["qty"] += $part["qty"];
+			else
+				$parts_byelement[$part["element_id"]] = $part;
+		}
+	}
+}
+
+$parts_bydesign = [];
+foreach ($parts_byelement as $part)
+	$parts_bydesign[$part["part_id"]][] = $part;
 ?>
 <h1>Find parts that occur in multiple similar colors</h1>
 <form method="get" action=".">
- <h1>
-  <img src="<?= $set["set_img_url"] ?>"><?= htmlspecialchars_decode($set["descr"]) ?>
-  <input type="text" name="set" placeholder="Set ID" value="<?= $set_number ?>">
- </h1>
+ <h2>
+<? foreach ($set as $set_json) { ?>
+  <img src="<?= $set_json["set_img_url"] ?>"><?= htmlspecialchars_decode($set_json["descr"]) ?>
+<? } ?>
+  <input type="text" name="set" placeholder="Set ID" value="<?= implode(" ", $set_numbers) ?>">
+ </h2>
 Show colors that might be confused with
 <select name="type">
 <?
@@ -52,12 +76,6 @@ foreach ($blindnesses as $blindness_type=>$color_set)
 </form>
 
 <?
-$parts_bydesign = [];
-// Arrange all parts by design, exclude extras
-foreach ($set["parts"] as $part)
-	if ($part["type"] === 1)
-		$parts_bydesign[$part["part_id"]][] = $part;
-
 // Get rid of parts only in one color
 foreach ($parts_bydesign as $key=>&$design)
 	if (count($design) === 1)

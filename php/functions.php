@@ -24,6 +24,13 @@ $blindnesses = [
 	"Achromatomaly" => [0.618,0.320,0.062,0,0, 0.163,0.775,0.062,0,0, 0.163,0.320,0.516,0,0, 0,0,0,1,0, 0,0,0,0]
 ];
 
+function clean_set_number($set) {
+	if (strpos($set, "-"))
+		return $set;
+	else
+		return $set . "-1";
+}
+
 function color_transform($o, $matrix) {
 	global $blindnesses;
 	$m = $blindnesses[$matrix];
