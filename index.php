@@ -85,7 +85,7 @@ foreach ($parts_bydesign as $key=>&$design)
 foreach ($parts_bydesign as $design) {
 	$similar_color_lists = make_similar_color_list($similar_color_bank, array_column($design, "ldraw_color_id"));
 	if (count($similar_color_lists)) {
-		echo "\n<h2>" . $design[0]["part_name"] . "</h2>\n";
+		echo "\n<h3>" . $design[0]["part_name"] . "</h3>\n";
 		foreach($similar_color_lists as $color_list) {
 			echo "<div>\n";
 			foreach ($design as $part) {
