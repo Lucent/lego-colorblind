@@ -2,6 +2,40 @@
 <html>
  <head>
   <title>Differentiate Similar Color Lego Parts for Colorblindness</title>
+  <script src="js/awesomplete/awesomplete.js" async></script>
+  <script>
+window.onload = function() {
+var ajax = new XMLHttpRequest();
+ajax.open("GET", "php/sets_to_autocomplete_list.php", true);
+ajax.onload = function() {
+	var list = JSON.parse(ajax.responseText).map(function(i) {
+		return i.id + " [" + i.name + " (" + i.year + ")]";
+	});
+	new Awesomplete(document.querySelector("input[data-multiple]"), {
+		filter: function(text, input) {
+			var regex = /^([^\s]+)\s([^(]+)/;
+			var parts = text.match(regex);
+			input = input.match(/[^,]*$/)[0].trim();
+			return parts[1].indexOf(input) === 0 ||
+				parts[2].toLowerCase().indexOf(input.toLowerCase()) !== -1;
+		},
+
+		replace: function(text) {
+			var before = this.input.value.match(/^.+,\s*|/)[0];
+			this.input.value = before + text.match(/^[^\s]+/)[0] + ", ";
+		},
+
+		sort: function(a, b) {
+			return parseInt(b.substr(-6, 4), 10) - parseInt(a.substr(-6, 4), 10);
+		},
+
+		list: list
+	});
+};
+ajax.send();
+};
+  </script>
+  <link href="js/awesomplete/awesomplete.css" rel="stylesheet" type="text/css">
   <link href="css/screen-default.css" rel="stylesheet" type="text/css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
  </head>
@@ -25,6 +59,7 @@ if (array_key_exists("set", $_GET)) {
 		$sets = explode(",", $_GET["set"]);
 	else
 		$sets = explode(" ", $_GET["set"]);
+	$sets = array_unique($sets);
 
 	$set_numbers = [];
 	foreach ($sets as $set)
@@ -68,8 +103,8 @@ foreach ($parts_byelement as $part)
 <? foreach ($set as $set_json) { ?>
   <img src="<?= $set_json["set_img_url"] ?>"><?= htmlspecialchars_decode($set_json["descr"]) ?>
 <? } ?>
-  <input type="text" name="set" placeholder="Set ID" value="<?= implode(" ", $set_numbers) ?>">
  </h2>
+  <input type="text" data-multiple name="set" placeholder="Set ID" value="<?= implode(",", $set_numbers) ?>">
 Show colors that might be confused with
 <select name="type">
 <?

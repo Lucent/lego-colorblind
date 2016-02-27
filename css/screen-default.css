@@ -6,6 +6,6 @@ div		{ border: thin solid black; padding: 1ex; background-color: white; margin: 
 figure	{ display: inline-block; margin: 1ex; }
 figcaption	{ font-size: small; font-family: sans-serif; margin-top: 1ex; text-align: center; }
 img		{ height: 96px; vertical-align: middle; }
-input[type=text]	{ font-size: x-large; margin: 1em; }
+input[type=text]	{ font-size: medium; width: 30em; margin: 1em; }
 input[type=radio]	{ }
 form	{ display: inline; }
