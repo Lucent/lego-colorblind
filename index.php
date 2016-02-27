@@ -7,8 +7,9 @@
  </head>
  <body>
 <?
-require "apikey.php";
-include "cache/similar_colors.php";
+require_once "php/color_difference.class.php";
+require_once "php/rebrick_colors_to_array.php";
+require_once "apikey.php";
 $similar_colors["Rebrickable"] = [
 	[-1, 0, 32, 64, 75, 132, 133, 9999],
 	[1, 3, 9, 11, 23, 33, 41, 43, 52, 61, 73, 85, 89, 110, 112, 137, 143, 212, 232, 272, 313, 321, 322, 379, 1001, 1003],
@@ -47,7 +48,7 @@ function get_set_json($id, $api_key) {
 	write_cache_miss($cache_folder . "cache_miss", $id);
 
 	if ($set_json == "NOSET")
-		return false;
+		return FALSE;
 	else {
 		$fh = fopen($cache_file, "w");
 		fwrite($fh, time() . "\n");
@@ -74,7 +75,7 @@ if (array_key_exists("set", $_GET)) {
 		$set_number = $_GET["set"] . "-1";
 
 	$set_json = json_decode(get_set_json($set_number, $api_key), true);
-	if ($set_json === false) {
+	if ($set_json === FALSE) {
 		echo "Invalid set ID";
 		exit;
 	} else
@@ -99,19 +100,85 @@ foreach ($similar_colors as $blindness_type=>$color_set)
 </form>
 
 <?
+function make_similar_color_list($colors) {
+	global $ldraw_colors;
+	$THRESHOLD = 20;
+	$similar_lists = [];
+	for ($x = 0; $x < count($colors); $x++) {
+		for ($y = $x + 1; $y < count($colors); $y++) {
+			$color_difference = (new color_difference())->deltaECIE2000($ldraw_colors[$colors[$x]]["RGBA"], $ldraw_colors[$colors[$y]]["RGBA"]);
+//			echo "comparing ", $ldraw_colors[$colors[$x]]["Name"], " and ", $ldraw_colors[$colors[$y]]["Name"], " diff: ", $color_difference, "\n";
+			if ($color_difference < $THRESHOLD)
+				add_color_pair($similar_lists, $colors[$x], $colors[$y]);
+		}
+	}
+	return $similar_lists;
+}
+
+function find_in_arrays($haystack, $needle) {
+	for ($x = 0; $x < count($haystack); $x++)
+		if (array_search($needle, $haystack[$x]) !== FALSE)
+			return $x;
+	return FALSE;
+}
+
+function add_color_pair(&$result, $first, $second) {
+	$first_found = find_in_arrays($result, $first);
+	$second_found = find_in_arrays($result, $second);
+
+	if ($first_found !== FALSE && $second_found !== FALSE && $first_found !== $second_found) {
+		$combined = array_unique(array_merge($result[$first_found], $result[$second_found]));
+		array_splice($result, $first_found, 1);
+		array_splice($result, $second_found, 1);
+		$result[] = $combined;
+	} elseif ($first_found !== FALSE) {
+		if (array_search($second, $result[$first_found]) === FALSE)
+			$result[$first_found][] = $second;
+	} elseif ($second_found !== FALSE) {
+		if (array_search($first, $result[$second_found]) === FALSE)
+			$result[$second_found][] = $first;
+	} else {
+		$result[] = [$first, $second];
+	}
+}
+
 $parts_bydesign = [];
+// Arrange all parts by design, exclude extras
+foreach ($set["parts"] as $part)
+	if ($part["type"] === 1)
+		$parts_bydesign[$part["part_id"]][] = $part;
+
+// Get rid of parts only in one color
+foreach ($parts_bydesign as $key=>&$design)
+	if (count($design) === 1)
+		unset($parts_bydesign[$key]);
+
+// Make similar color banks for each part
+foreach ($parts_bydesign as $design) {
+	$similar_color_lists = make_similar_color_list(array_column($design, "ldraw_color_id"));
+	if (count($similar_color_lists)) {
+		echo "\n<h2>" . $design[0]["part_name"] . "</h2>\n";
+		foreach($similar_color_lists as $color_list) {
+			echo "<div>\n";
+			foreach ($design as $part) {
+				if (in_array($part["ldraw_color_id"], $color_list) === TRUE)
+					echo "<figure><img src='" . $part["part_img_url"] . "'><figcaption>" . $part["color_name"] . " (" .  $part["qty"] . ")</figcaption></figure>\n";
+			}
+			echo "</div>\n";
+		}
+	}
+}
+
+
+
+
+
+/*
+
 foreach ($similar_color_bank as $color_pair_idx=>$color_pairs) {
 	foreach ($set["parts"] as $part) {
 		if (in_array($part["ldraw_color_id"], $color_pairs) && $part["type"] == 1)
 			$parts_bydesign[$color_pair_idx][$part["part_id"]][] = $part;
-	}
-}
-
-// Clear out parts that aren't in multiple confusing colors
-foreach ($parts_bydesign as $key1=>$color_pair) {
-	foreach ($color_pair as $key2=>$part) {
-		if (count($part) === 1)
-			unset($parts_bydesign[$key1][$key2]);
 	}
 }
 
@@ -121,7 +188,7 @@ foreach ($parts_bydesign as $color_pair) {
 		foreach ($part as $color)
 			echo "<div><img src='" . $color["part_img_url"] . "'><br><span>" . $color["color_name"] . " (" .  $color["qty"] . ")</span></div>\n";
 	}
-}
+}*/
 ?>
  </body>
 </html>
