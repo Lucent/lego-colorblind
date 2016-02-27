@@ -48,6 +48,12 @@ foreach ($set as $set_json) {
 				$parts_byelement[$part["element_id"]]["qty"] += $part["qty"];
 			else
 				$parts_byelement[$part["element_id"]] = $part;
+		} else {
+			if (array_key_exists($part["element_id"], $parts_byelement))
+				$parts_byelement[$part["element_id"]]["extra"] += $part["qty"];
+			else {
+				// Extra piece that isn't also a normal piece: brick separator 4654448
+			}
 		}
 	}
 }
@@ -89,8 +95,12 @@ foreach ($parts_bydesign as $design) {
 		foreach($similar_color_lists as $color_list) {
 			echo "<div>\n";
 			foreach ($design as $part) {
-				if (in_array($part["ldraw_color_id"], $color_list) === TRUE)
-					echo "<figure><img src='" . $part["part_img_url"] . "'><figcaption>" . $part["color_name"] . " (" .  $part["qty"] . ")</figcaption></figure>\n";
+				if (in_array($part["ldraw_color_id"], $color_list) === TRUE) {
+					echo "<figure><img src='" . $part["part_img_url"] . "'><figcaption>" . $part["color_name"] . " (" .  $part["qty"];
+					if (array_key_exists("extra", $part))
+						echo "<sup>+" . $part["extra"] . "</sup>";
+					echo ")</figcaption></figure>\n";
+				}
 			}
 			echo "</div>\n";
 		}
