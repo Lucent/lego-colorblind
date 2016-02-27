@@ -112,6 +112,10 @@ function find_in_arrays($haystack, $needle) {
 }
 
 function add_color_pair(&$result, $first, $second) {
+	global $ldraw_colors;
+	if (abs($ldraw_colors[$first]["RGBA"][3] - $ldraw_colors[$second]["RGBA"][3]) >= 127)
+		return;
+
 	$first_found = find_in_arrays($result, $first);
 	$second_found = find_in_arrays($result, $second);
 
