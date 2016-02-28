@@ -135,3 +135,17 @@ function add_color_pair(&$result, $first, $second) {
 		$result[] = [$first, $second];
 	}
 }
+
+function count_parts($parts) {
+	$regular = 0;
+	$extra = 0;
+
+	foreach($parts as $part) {
+		if ($part["type"] === 1)
+			$regular += $part["qty"];
+		else
+			$extra += $part["qty"];
+	}
+
+	return [$regular, $extra];
+}

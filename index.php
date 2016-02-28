@@ -116,13 +116,16 @@ foreach ($blindnesses as $blindness_type=>$color_set)
 </select>.<br>
 <input type="checkbox" name="dark" id="Dark" value="50" <?= array_key_exists("dark", $_GET) ? "checked" : "" ?>> <label for="Dark">Simulate dim lighting</label><br>
 <input type="submit" value="Show similarly colored parts">
-</form>
- <h2>
-<? foreach ($set as $set_json) { ?>
-  <img src="<?= $set_json["set_img_url"] ?>"><?= htmlspecialchars_decode($set_json["descr"]) ?>
+</form><br>
+<? foreach ($set as $set_json) {
+	$parts_count = count_parts($set_json["parts"]);
+?>
+<h2 style="float: left;">
+ <img src="<?= $set_json["set_img_url"] ?>">
+ <span style="float: right;"><?= $set_json["set_id"] ?><br><?= htmlspecialchars_decode($set_json["descr"]) ?><br><?= $parts_count[0] . "<sup>+" . $parts_count[1]  ?></sup> pieces</span>
+</h2>
 <? } ?>
- </h2>
-
+<br style="clear: both;">
 <?
 // Get rid of parts only in one color
 foreach ($parts_bydesign as $key=>&$design)
@@ -130,6 +133,7 @@ foreach ($parts_bydesign as $key=>&$design)
 		unset($parts_bydesign[$key]);
 
 // Make similar color banks for each part
+$confusing_parts_count = 0;
 foreach ($parts_bydesign as $design) {
 	$similar_color_lists = make_similar_color_list($similar_color_bank, array_column($design, "ldraw_color_id"));
 	if (count($similar_color_lists)) {
@@ -146,8 +150,14 @@ foreach ($parts_bydesign as $design) {
 			}
 			echo "</div>\n";
 		}
+		$confusing_parts_count++;
 	}
 }
+
+if (empty($parts_bydesign))
+	echo "<h3>Each part in this set occurs in only one color.</h3>";
+elseif ($confusing_parts_count === 0)
+	echo "<h3>No parts in this set occur in similar, confusing colors for the chosen color vision type and lighting.</h3>";
 ?>
  </body>
 </html>
