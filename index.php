@@ -12,6 +12,9 @@ ajax.onload = function() {
 		return i.id + " [" + i.name + " (" + i.year + ")]";
 	});
 	new Awesomplete(document.querySelector("input[data-multiple]"), {
+		maxItems: 20,
+		autoFirst: true,
+
 		filter: function(text, input) {
 			var regex = /^([^\s]+)\s([^(]+)/;
 			var parts = text.match(regex);
@@ -63,7 +66,8 @@ if (array_key_exists("set", $_GET)) {
 
 	$set_numbers = [];
 	foreach ($sets as $set)
-		$set_numbers[] = clean_set_number($set);
+		if (trim($set) !== "")
+			$set_numbers[] = clean_set_number($set);
 
 	$set = [];
 	foreach ($set_numbers as $set_number) {
@@ -99,12 +103,7 @@ foreach ($parts_byelement as $part)
 ?>
 <h1>Find parts that occur in multiple similar colors</h1>
 <form method="get" action=".">
- <h2>
-<? foreach ($set as $set_json) { ?>
-  <img src="<?= $set_json["set_img_url"] ?>"><?= htmlspecialchars_decode($set_json["descr"]) ?>
-<? } ?>
- </h2>
-  <input type="text" data-multiple name="set" placeholder="Set ID" value="<?= implode(",", $set_numbers) ?>">
+  <input type="text" data-multiple name="set" placeholder="Set ID" value="<?= implode(",", $set_numbers) ?>"><br>
 Show colors that might be confused with
 <select name="type">
 <?
@@ -115,6 +114,11 @@ foreach ($blindnesses as $blindness_type=>$color_set)
 <input type="checkbox" name="dark" id="Dark" value="50" <?= array_key_exists("dark", $_GET) ? "checked" : "" ?>> <label for="Dark">Simulate dim lighting</label><br>
 <input type="submit" value="Show similarly colored parts">
 </form>
+ <h2>
+<? foreach ($set as $set_json) { ?>
+  <img src="<?= $set_json["set_img_url"] ?>"><?= htmlspecialchars_decode($set_json["descr"]) ?>
+<? } ?>
+ </h2>
 
 <?
 // Get rid of parts only in one color

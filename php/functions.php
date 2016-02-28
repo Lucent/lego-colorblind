@@ -25,9 +25,7 @@ $blindnesses = [
 ];
 
 function clean_set_number($set) {
-	if (trim($set) === "")
-		return FALSE;
-	elseif (strpos($set, "-"))
+	if (strpos($set, "-"))
 		return $set;
 	else
 		return $set . "-1";
