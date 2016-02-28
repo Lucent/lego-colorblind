@@ -8,27 +8,28 @@ window.onload = function() {
 var ajax = new XMLHttpRequest();
 ajax.open("GET", "php/sets_to_autocomplete_list.php", true);
 ajax.onload = function() {
-	var list = JSON.parse(ajax.responseText).map(function(i) {
-		return i.id + " [" + i.name + " (" + i.year + ")]";
-	});
+	var list = JSON.parse(ajax.responseText);
 	new Awesomplete(document.querySelector("input[data-multiple]"), {
-		maxItems: 20,
+		maxItems: 25,
 		autoFirst: true,
 
 		filter: function(text, input) {
 			var regex = /^([^\s]+)\s([^(]+)/;
 			var parts = text.match(regex);
 			input = input.match(/[^,]*$/)[0].trim();
+			// Only match set numbers from the start, but match words anywhere
 			return parts[1].indexOf(input) === 0 ||
 				parts[2].toLowerCase().indexOf(input.toLowerCase()) !== -1;
 		},
 
 		replace: function(text) {
 			var before = this.input.value.match(/^.+,\s*|/)[0];
+			// On select remove everything but the set number
 			this.input.value = before + text.match(/^[^\s]+/)[0] + ", ";
 		},
 
 		sort: function(a, b) {
+			// Sort by year released, descending
 			return parseInt(b.substr(-6, 4), 10) - parseInt(a.substr(-6, 4), 10);
 		},
 
