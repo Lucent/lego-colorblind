@@ -81,7 +81,9 @@ if (array_key_exists("set", $_GET)) {
 
 $parts_byelement = [];
 foreach ($set as $set_json) {
-	foreach ($set_json["parts"] as $part) {
+	if (empty($set_json["parts"]))
+		echo "No inventory for ", $set_json["descr"], "\n";
+	else foreach ($set_json["parts"] as $part) {
 		if ($part["type"] === 1) {
 			if (array_key_exists($part["element_id"], $parts_byelement))
 				$parts_byelement[$part["element_id"]]["qty"] += $part["qty"];
