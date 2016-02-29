@@ -47,11 +47,12 @@ ajax.send();
 <?
 require_once "php/color_difference.class.php";
 require_once "php/rebrick_colors_to_array.php";
+require_once "php/color-blind.php";
 require_once "php/functions.php";
 require_once "apikey.php";
 
 if (array_key_exists("type", $_GET))
-	if (array_key_exists($_GET["type"], $blindnesses))
+//	if (array_key_exists($_GET["type"], $blindnesses))
 		$similar_color_bank = $_GET["type"];
 
 if (array_key_exists("dark", $_GET))
@@ -110,7 +111,7 @@ foreach ($parts_byelement as $part)
 Show colors that might be confused with
 <select name="type">
 <?
-foreach ($blindnesses as $blindness_type=>$color_set)
+foreach (array_merge($blindness_matrix, $blindness_brian) as $blindness_type=>$color_set)
 	echo "<option value='$blindness_type'", $_GET["type"] == $blindness_type ? " selected" : "", ">$blindness_type</option>\n";
 ?>
 </select>.<br>

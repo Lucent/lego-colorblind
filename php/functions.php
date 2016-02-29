@@ -12,7 +12,7 @@ $similar_colors["Rebrickable"] = [
 	[1004, 1005]
 ];
 
-$blindnesses = [
+$blindness_matrix = [
 	"Normal vision" => [1,0,0,0,0, 0,1,0,0,0, 0,0,1,0,0, 0,0,0,1,0],
 	"Protanopia" => [0.567,0.433,0,0,0, 0.558,0.442,0,0,0, 0,0.242,0.758,0,0, 0,0,0,1,0],
 	"Protanomaly" => [0.817,0.183,0,0,0, 0.333,0.667,0,0,0, 0,0.125,0.875,0,0, 0,0,0,1,0],
@@ -32,10 +32,18 @@ function clean_set_number($set) {
 		return $set . "-1";
 }
 
-function color_transform($o, $matrix) {
-	global $blindnesses;
+function convert_color($o, $matrix) {
+	global $blindness_matrix, $blindness_brian;
+	if (array_key_exists($matrix, $blindness_matrix))
+		return color_transform_matrix($o, $matrix);
+	elseif (array_key_exists($matrix, $blindness_brian))
+		return color_transform_brian($o, $matrix);
+}
+
+function color_transform_matrix($o, $matrix) {
+	global $blindness_matrix;
 	$bg = [255, 255, 255];
-	$m = $blindnesses[$matrix];
+	$m = $blindness_matrix[$matrix];
 
     $r = (($o[0]*$m[0])+($o[1]*$m[1])+($o[2]*$m[2])+($o[3]*$m[3])+$m[4]);
     $g = (($o[0]*$m[5])+($o[1]*$m[6])+($o[2]*$m[7])+($o[3]*$m[8])+$m[9]);
@@ -92,12 +100,14 @@ function write_cache_miss($file, $set_id) {
 
 function make_similar_color_list($bank, $colors) {
 	global $ldraw_colors;
-	$THRESHOLD = 10; // Use 20 and 10197 to diagnose chaining, 6 pairs of chains
+	$THRESHOLD = 15; // Use 20 and 10197 to diagnose chaining, 6 pairs of chains
 	$similar_lists = [];
 	for ($x = 0; $x < count($colors); $x++) {
 		for ($y = $x + 1; $y < count($colors); $y++) {
-			$color_difference = (new color_difference())->deltaECIE2000(color_transform($ldraw_colors[$colors[$x]]["RGBA"], $bank), color_transform($ldraw_colors[$colors[$y]]["RGBA"], $bank));
-//			echo "comparing ", $ldraw_colors[$colors[$x]]["Name"], " and ", $ldraw_colors[$colors[$y]]["Name"], " diff: ", $color_difference, "\n";
+			$color1 = $ldraw_colors[$colors[$x]]["RGBA"];
+			$color2 = $ldraw_colors[$colors[$y]]["RGBA"];
+			$color_difference = (new color_difference())->deltaECIE2000(convert_color($color1, $bank), convert_color($color2, $bank));
+//			echo "comparing ", implode(",", $color1), " and ", implode(",", $color2) , " diff: ", $color_difference, "\n";
 			if ($color_difference < $THRESHOLD)
 				add_color_pair($similar_lists, $colors[$x], $colors[$y]);
 		}
