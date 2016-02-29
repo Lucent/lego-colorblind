@@ -6,7 +6,7 @@
   <script>
 window.onload = function() {
 var ajax = new XMLHttpRequest();
-ajax.open("GET", "php/sets_to_autocomplete_list.php", true);
+ajax.open("GET", "cache/set_autocomplete_list.json", true);
 ajax.onload = function() {
 	var list = JSON.parse(ajax.responseText);
 	new Awesomplete(document.querySelector("input[data-multiple]"), {
@@ -53,7 +53,9 @@ require_once "apikey.php";
 
 if (array_key_exists("type", $_GET))
 //	if (array_key_exists($_GET["type"], $blindnesses))
-		$similar_color_bank = $_GET["type"];
+	$similar_color_bank = $_GET["type"];
+else
+	$similar_color_bank = "Normal Vision";
 
 if (array_key_exists("dark", $_GET))
 	if (is_numeric($_GET["dark"]))
