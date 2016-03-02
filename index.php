@@ -142,7 +142,7 @@ foreach ($parts_bydesign as $design) {
 	if (count($similar_color_lists)) {
 		echo "\n<h3>" . $design[0]["part_name"] . "</h3>\n";
 		foreach($similar_color_lists as $color_list) {
-			echo "<div>\n";
+			echo "<section>\n";
 			foreach ($design as $part) {
 				if (in_array($part["ldraw_color_id"], $color_list) === TRUE) {
 					echo "<figure><img src='" . $part["part_img_url"] . "'><figcaption>" . $part["color_name"] . " (" .  $part["qty"];
@@ -151,7 +151,7 @@ foreach ($parts_bydesign as $design) {
 					echo ")</figcaption></figure>\n";
 				}
 			}
-			echo "</div>\n";
+			echo "</section>\n";
 		}
 		$confusing_parts_count++;
 	}
