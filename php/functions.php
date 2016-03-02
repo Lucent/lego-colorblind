@@ -159,3 +159,60 @@ function count_parts($parts) {
 
 	return [$regular, $extra];
 }
+
+function rgb2hex($rgb) {
+	return '#' . sprintf('%02x', $rgb[0]) . sprintf('%02x', $rgb[1]) . sprintf('%02x', $rgb[2]);
+}
+
+function show_similar_colored_parts($parts_bydesign, $similar_color_bank) {
+	// Get rid of parts only in one color
+	foreach ($parts_bydesign as $key=>&$design)
+		if (count($design) === 1)
+			unset($parts_bydesign[$key]);
+
+	// Make similar color banks for each part
+	$confusing_parts_count = 0;
+	foreach ($parts_bydesign as $design) {
+		$similar_color_lists = make_similar_color_list($similar_color_bank, array_column($design, "ldraw_color_id"));
+		if (count($similar_color_lists)) {
+			echo "\n<h3>" . $design[0]["part_name"] . "</h3>\n";
+			foreach ($similar_color_lists as $color_list) {
+				echo "<section>\n";
+				foreach ($design as $part) {
+					if (in_array($part["ldraw_color_id"], $color_list) === TRUE) {
+						echo "<figure><img src='" . $part["part_img_url"] . "'><figcaption>" . $part["color_name"] . " (" .  $part["qty"];
+						if (array_key_exists("extra", $part))
+							echo "<sup>+" . $part["extra"] . "</sup>";
+						echo ")</figcaption></figure>\n";
+					}
+				}
+				echo "</section>\n";
+			}
+			$confusing_parts_count++;
+		}
+	}
+
+	if (empty($parts_bydesign))
+		echo "<h3>Each part design in this set occurs in a unique color.</h3>";
+	elseif ($confusing_parts_count === 0)
+		echo "<h3>No parts in this set occur in similar, confusing colors for the chosen color vision type and lighting.</h3>";
+}
+
+function show_similar_colors($parts_bycolor, $similar_color_bank) {
+	global $ldraw_colors;
+	foreach ($parts_bycolor as &$color_arr)
+		$color_arr["qty"] = array_sum(array_column($color_arr, "qty"));
+
+	$similar_color_lists = make_similar_color_list($similar_color_bank, array_keys($parts_bycolor));
+	foreach ($similar_color_lists as $color_list) {
+		echo "<section>\n";
+		foreach ($color_list as $ldraw_color) {
+			$color = rgb2hex($ldraw_colors[$ldraw_color]["RGBA"]);
+			echo "<figure><div style='height: 100px; width: 100px; background-color: $color;'></div><figcaption>" . $ldraw_colors[$ldraw_color]["Name"] . " (" . $parts_bycolor[$ldraw_color]["qty"];
+//			if (array_key_exists("extra", $part))
+//				echo "<sup>+" . $part["extra"] . "</sup>";
+			echo ")</figcaption></figure>\n";
+		}
+		echo "</section>\n";
+	}
+}

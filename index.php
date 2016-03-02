@@ -54,8 +54,6 @@ require_once "apikey.php";
 if (array_key_exists("type", $_GET))
 //	if (array_key_exists($_GET["type"], $blindnesses))
 	$similar_color_bank = $_GET["type"];
-else
-	$similar_color_bank = "Normal Vision";
 
 if (array_key_exists("dark", $_GET))
 	if (is_numeric($_GET["dark"]))
@@ -95,7 +93,7 @@ foreach ($set as $set_json) {
 				$parts_byelement[$part["element_id"]] = $part;
 		} else {
 			if (array_key_exists($part["element_id"], $parts_byelement))
-				$parts_byelement[$part["element_id"]]["extra"] += $part["qty"];
+				@$parts_byelement[$part["element_id"]]["extra"] += $part["qty"];
 			else {
 				// Extra piece that isn't also a normal piece: brick separator 4654448
 			}
@@ -103,23 +101,27 @@ foreach ($set as $set_json) {
 	}
 }
 
-$parts_bydesign = [];
-foreach ($parts_byelement as $part)
+$parts_bydesign = []; $parts_bycolor = [];
+foreach ($parts_byelement as $part) {
 	$parts_bydesign[$part["part_id"]][] = $part;
+	$parts_bycolor[$part["ldraw_color_id"]][] = $part;
+}
+
 ?>
 <h1>Find parts that occur in multiple similar colors</h1>
 <form method="get" action=".">
-  <input type="text" data-multiple name="set" placeholder="Set ID" value="<?= implode(",", $set_numbers) ?>"><br>
-Show colors that might be confused with
-<select name="type">
+ <input type="text" data-multiple name="set" placeholder="Set ID" value="<?= implode(",", $set_numbers) ?>"><br>
+ Show colors that might be confused with
+ <select name="type">
 <?
 foreach (array_merge($blindness_matrix, $blindness_brian) as $blindness_type=>$color_set)
-	echo "<option value='$blindness_type'", $_GET["type"] == $blindness_type ? " selected" : "", ">$blindness_type</option>\n";
+	echo "  <option value='$blindness_type'", $_GET["type"] == $blindness_type ? " selected" : "", ">$blindness_type</option>\n";
 ?>
-</select>.<br>
-<input type="checkbox" name="dark" id="Dark" value="50" <?= array_key_exists("dark", $_GET) ? "checked" : "" ?>> <label for="Dark">Simulate dim lighting</label><br>
-<input type="submit" value="Show similarly colored parts">
-</form><br>
+ </select>.<br>
+ <input type="checkbox" name="dark" id="Dark" value="50" <?= array_key_exists("dark", $_GET) ? "checked" : "" ?>> <label for="Dark">Simulate dim lighting</label><br>
+ <button type="submit" name="view" value="parts">Show similarly colored parts</button>
+ <button type="submit" name="view" value="colors">Show all colors used in set</button>
+</form>
 <? foreach ($set as $set_json) {
 	$parts_count = count_parts($set_json["parts"]);
 ?>
@@ -130,37 +132,10 @@ foreach (array_merge($blindness_matrix, $blindness_brian) as $blindness_type=>$c
 <? } ?>
 <br style="clear: both;">
 <?
-// Get rid of parts only in one color
-foreach ($parts_bydesign as $key=>&$design)
-	if (count($design) === 1)
-		unset($parts_bydesign[$key]);
-
-// Make similar color banks for each part
-$confusing_parts_count = 0;
-foreach ($parts_bydesign as $design) {
-	$similar_color_lists = make_similar_color_list($similar_color_bank, array_column($design, "ldraw_color_id"));
-	if (count($similar_color_lists)) {
-		echo "\n<h3>" . $design[0]["part_name"] . "</h3>\n";
-		foreach($similar_color_lists as $color_list) {
-			echo "<section>\n";
-			foreach ($design as $part) {
-				if (in_array($part["ldraw_color_id"], $color_list) === TRUE) {
-					echo "<figure><img src='" . $part["part_img_url"] . "'><figcaption>" . $part["color_name"] . " (" .  $part["qty"];
-					if (array_key_exists("extra", $part))
-						echo "<sup>+" . $part["extra"] . "</sup>";
-					echo ")</figcaption></figure>\n";
-				}
-			}
-			echo "</section>\n";
-		}
-		$confusing_parts_count++;
-	}
-}
-
-if (empty($parts_bydesign))
-	echo "<h3>Each part in this set occurs in only one color.</h3>";
-elseif ($confusing_parts_count === 0)
-	echo "<h3>No parts in this set occur in similar, confusing colors for the chosen color vision type and lighting.</h3>";
+if ($_GET["view"] === "parts")
+	show_similar_colored_parts($parts_bydesign, $similar_color_bank);
+elseif ($_GET["view"] === "colors")
+	show_similar_colors($parts_bycolor, $similar_color_bank);
 ?>
  </body>
 </html>
