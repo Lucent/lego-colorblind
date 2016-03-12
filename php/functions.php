@@ -100,7 +100,9 @@ function write_cache_miss($file, $set_id) {
 
 function make_similar_color_list($bank, $colors) {
 	global $ldraw_colors;
-	$THRESHOLD = 12; // Use 20 and 10197 to diagnose chaining, 6 pairs of chains
+	// Use 20 and 10197 to diagnose chaining, 6 pairs of chains
+	// 13 gets dark green and red brown in deuter brian
+	$THRESHOLD = 13;
 	$similar_lists = [];
 	for ($x = 0; $x < count($colors); $x++) {
 		for ($y = $x + 1; $y < count($colors); $y++) {
