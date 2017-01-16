@@ -1,0 +1,4 @@
+rm cache/set_autocomplete_list.json
+wget -nv -Ocache/set_autocomplete_list.json http://brick.design/color/php/sets_to_autocomplete_list.php
+chown www-data cache/set_autocomplete_list.json
+chgrp www-data cache/set_autocomplete_list.json

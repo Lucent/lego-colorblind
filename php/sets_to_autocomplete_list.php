@@ -1,4 +1,4 @@
-<?
+<?php
 header("Content-Type: application/json");
 $fp = fopen("../data/sets.csv", "r");
 $autocomplete_list = [];

@@ -23,9 +23,9 @@ http://www.brucelindbloom.com/WorkingSpaceInfo.html
 */
 
 $blindness_brian = [
-	"Protanopia Brian" => ['x'=>0.7465,'y'=>0.2535,'m'=>1.273463,'yint'=>-0.073894],
-	"Deuteranopia Brian" => ['x'=>1.4,   'y'=>-0.4,  'm'=>0.968437,'yint'=>0.003331],
-	"Tritanopia Brian" => ['x'=>0.1748,'y'=>0,     'm'=>0.062921,'yint'=>0.292119]
+	"protanopia 2" => ['x'=>0.7465,'y'=>0.2535,'m'=>1.273463,'yint'=>-0.073894],
+	"deuteranopia 2" => ['x'=>1.4,   'y'=>-0.4,  'm'=>0.968437,'yint'=>0.003331],
+	"tritanopia 2" => ['x'=>0.1748,'y'=>0,     'm'=>0.062921,'yint'=>0.292119]
 ];
 
 function Monochrome($hex){
@@ -107,9 +107,9 @@ function color_transform_brian($hex,$type){
 	$dg = pow($dg, 1.0 / 2.2);
 	$db = pow($db, 1.0 / 2.2);
 	// Anomylize colors
-	$R = $sr * (1.0 - $amount) + $dr * $amount;
-	$G = $sg * (1.0 - $amount) + $dg * $amount;
-	$B = $sb * (1.0 - $amount) + $db * $amount;
+	$R = $dr * (1.0 - $amount) + $dr * $amount;
+	$G = $dg * (1.0 - $amount) + $dg * $amount;
+	$B = $db * (1.0 - $amount) + $db * $amount;
 	// Return values
 
 	return [$R, $G, $B];

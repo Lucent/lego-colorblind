@@ -1,4 +1,4 @@
-<?
+<?php
 // Paste https://rebrickable.com/colors into Excel, remove the first 3 columns, and save as CSV.
 $fp = fopen("data/colors.csv", "r");
 $regexp = '/^(\d+),([^,]+),#(\w{6})/';

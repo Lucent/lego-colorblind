@@ -44,20 +44,17 @@ ajax.send();
   <meta name="viewport" content="width=device-width, initial-scale=1">
  </head>
  <body>
-<?
+<?php
 require_once "php/color_difference.class.php";
 require_once "php/rebrick_colors_to_array.php";
 require_once "php/color-blind.php";
 require_once "php/functions.php";
 require_once "apikey.php";
 
-if (array_key_exists("type", $_GET))
-//	if (array_key_exists($_GET["type"], $blindnesses))
-	$similar_color_bank = $_GET["type"];
 
-if (array_key_exists("dark", $_GET))
-	if (is_numeric($_GET["dark"]))
-		$darken_factor = $_GET["dark"];
+if (array_key_exists("lighting", $_GET))
+	if (is_numeric($_GET["lighting"]))
+		$darken_factor = $_GET["lighting"];
 
 if (array_key_exists("set", $_GET)) {
 	if (strpos($_GET["set"], ","))
@@ -108,30 +105,41 @@ foreach ($parts_byelement as $part) {
 }
 
 ?>
-<h1>Find parts that occur in multiple similar colors</h1>
+<fieldset>
+<legend>Find easily confused parts in set</legend>
 <form method="get" action=".">
- <input type="text" data-multiple name="set" placeholder="Set ID" value="<?= implode(",", $set_numbers) ?>"><br>
- Show colors that might be confused with
- <select name="type">
-<?
+ <input type="text" data-multiple name="set" placeholder="Set name or number" value="<?= implode(",", $set_numbers) ?>"><br>
+ <label for="Blindness">Viewed with</label>
+ <select name="type" id="Blindness">
+<?php
 foreach (array_merge($blindness_matrix, $blindness_brian) as $blindness_type=>$color_set)
 	echo "  <option value='$blindness_type'", $_GET["type"] == $blindness_type ? " selected" : "", ">$blindness_type</option>\n";
 ?>
- </select>.<br>
- <input type="checkbox" name="dark" id="Dark" value="50" <?= array_key_exists("dark", $_GET) ? "checked" : "" ?>> <label for="Dark">Simulate dim lighting</label><br>
- <button type="submit" name="view" value="parts">Show similarly colored parts</button>
- <button type="submit" name="view" value="colors">Show all colors used in set</button>
+ </select> <label>under</label> <select name="lighting" id="Lighting"><option value="0">normal</option><option value="50" <?= array_key_exists("lighting", $_GET) && $_GET["lighting"] >= 50 ? "selected" : "" ?>>dim</option></select> <label for="Lighting">lighting</label><br>
+ <button type="submit" name="view" value="parts">Show similar parts</button>
+<!-- <button type="submit" name="view" value="colors">All colors in set</button> -->
 </form>
-<? foreach ($set as $set_json) {
+</fieldset>
+<?php
+if (array_key_exists("type", $_GET))
+	if (array_key_exists($_GET["type"], array_merge($blindness_matrix, $blindness_brian)))
+		$similar_color_bank = $_GET["type"];
+	else {
+		echo "<h3>Invalid color vision type selected.</h3>";
+		exit;
+	}
+?>
+<br style="clear: both;">
+<?php foreach ($set as $set_json) {
 	$parts_count = count_parts($set_json["parts"]);
 ?>
-<h2 style="float: left;">
- <img src="<?= $set_json["set_img_url"] ?>">
- <span style="float: right;"><?= $set_json["set_id"] ?><br><?= htmlspecialchars_decode($set_json["descr"]) ?><br><?= $parts_count[0] . "<sup>+" . $parts_count[1]  ?></sup> pieces</span>
+<h2>
+ <img src="<?= $set_json["set_img_url"] ?>" style="float: left;">
+ <span><?= $set_json["set_id"] ?><br><?= htmlspecialchars_decode($set_json["descr"]) ?><br><?= $parts_count[0] . "<sup>+" . $parts_count[1]  ?></sup> pieces</span>
 </h2>
-<? } ?>
+<?php } ?>
 <br style="clear: both;">
-<?
+<?php
 if ($_GET["view"] === "parts")
 	show_similar_colored_parts($parts_bydesign, $similar_color_bank);
 elseif ($_GET["view"] === "colors")
