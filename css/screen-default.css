@@ -7,7 +7,7 @@ h3		{ font-family: sans-serif; font-size: large; margin-top: 1em; margin-bottom:
 section	{ border: thin solid black; padding: 1ex; background-color: white; margin: 1ex; display: inline-block; }
 figure	{ display: inline-block; margin: 1ex; }
 figcaption	{ font-size: small; font-family: sans-serif; margin-top: 1ex; text-align: center; }
-img		{ height: 96px; vertical-align: middle; }
+img		{ height: 4em; vertical-align: middle; }
 input[type=text]	{ font-size: x-large; width: 20em; margin-bottom: 1em; }
 button				{ font-size: x-large; margin-top: 1em; }
 label, select		{ font-size: large; }

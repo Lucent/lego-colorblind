@@ -195,9 +195,9 @@ function show_similar_colored_parts($parts_bydesign, $similar_color_bank) {
 	}
 
 	if (empty($parts_bydesign))
-		echo "<h3>Each part design in this set occurs in a unique color.</h3>";
+		echo "<h3>Each part design in this set occurs in a unique color.</h3>\n";
 	elseif ($confusing_parts_count === 0)
-		echo "<h3>No parts in this set occur in similar, confusing colors for the chosen color vision type and lighting.</h3>";
+		echo "<h3>No parts in this set occur in similar, confusing colors for the chosen color vision type and lighting.</h3>\n";
 }
 
 function show_similar_colors($parts_bycolor, $similar_color_bank) {

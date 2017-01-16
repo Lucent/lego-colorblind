@@ -71,7 +71,7 @@ if (array_key_exists("set", $_GET)) {
 	foreach ($set_numbers as $set_number) {
 		$set_json = get_set_json($set_number, $api_key);
 		if ($set_json !== FALSE)
-			$set[]= json_decode($set_json, true)[0];
+			$set[] = json_decode($set_json, true)[0];
 	}
 }
 ?>
@@ -94,9 +94,10 @@ foreach (array_merge($blindness_matrix, $blindness_brian) as $blindness_type=>$c
 
 $parts_byelement = [];
 foreach ($set as $set_json) {
-	if (empty($set_json["parts"]))
-		echo "No inventory for ", $set_json["descr"], "\n";
-	else foreach ($set_json["parts"] as $part) {
+	if (empty($set_json["parts"])) {
+		echo "<h3>No inventory available for {$set_json["descr"]} yet, sorry.</h3>\n";
+		exit;
+	} else foreach ($set_json["parts"] as $part) {
 		if ($part["type"] === 1) {
 			if (array_key_exists($part["element_id"], $parts_byelement))
 				$parts_byelement[$part["element_id"]]["qty"] += $part["qty"];
@@ -129,18 +130,15 @@ if (array_key_exists("set", $_GET) && count($set) === 0) {
 	echo "<h3>No valid set IDs given.</h3>";
 	exit;
 }
-?>
-<br style="clear: both;">
-<?php foreach ($set as $set_json) {
+foreach ($set as $set_json) {
 	$parts_count = count_parts($set_json["parts"]);
 ?>
 <h2>
  <img src="<?= $set_json["set_img_url"] ?>" style="float: left;">
  <span><?= $set_json["set_id"] ?><br><?= htmlspecialchars_decode($set_json["descr"]) ?><br><?= $parts_count[0] . "<sup>+" . $parts_count[1]  ?></sup> pieces</span>
 </h2>
-<?php } ?>
-<br style="clear: both;">
 <?php
+}
 if ($_GET["view"] === "parts")
 	show_similar_colored_parts($parts_bydesign, $similar_color_bank);
 elseif ($_GET["view"] === "colors")
