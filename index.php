@@ -51,7 +51,6 @@ require_once "php/color-blind.php";
 require_once "php/functions.php";
 require_once "apikey.php";
 
-
 if (array_key_exists("lighting", $_GET))
 	if (is_numeric($_GET["lighting"]))
 		$darken_factor = $_GET["lighting"];
@@ -70,13 +69,28 @@ if (array_key_exists("set", $_GET)) {
 
 	$set = [];
 	foreach ($set_numbers as $set_number) {
-		$set_json = json_decode(get_set_json($set_number, $api_key), true);
-		if ($set_json === FALSE)
-			echo "Invalid set ID ", $set_number;
-		else
-			$set[] = $set_json[0];
+		$set_json = get_set_json($set_number, $api_key);
+		if ($set_json !== FALSE)
+			$set[]= json_decode($set_json, true)[0];
 	}
 }
+?>
+<fieldset>
+<legend>Find easily confused parts in set</legend>
+<form method="get" action=".">
+ <input type="text" data-multiple name="set" placeholder="Set name or number" value="<?= implode(",", $set_numbers) ?>"><br>
+ <label for="Blindness">Viewed with</label>
+ <select name="type" id="Blindness">
+<?php
+foreach (array_merge($blindness_matrix, $blindness_brian) as $blindness_type=>$color_set)
+	echo "  <option value='$blindness_type'", $_GET["type"] == $blindness_type ? " selected" : "", ">$blindness_type</option>\n";
+?>
+ </select> <label>under</label> <select name="lighting" id="Lighting"><option value="0">normal</option><option value="50" <?= array_key_exists("lighting", $_GET) && $_GET["lighting"] >= 50 ? "selected" : "" ?>>dim</option></select> <label for="Lighting">lighting</label><br>
+ <button type="submit" name="view" value="parts">Show similar parts</button>
+<!-- <button type="submit" name="view" value="colors">All colors in set</button> -->
+</form>
+</fieldset>
+<?php
 
 $parts_byelement = [];
 foreach ($set as $set_json) {
@@ -103,31 +117,18 @@ foreach ($parts_byelement as $part) {
 	$parts_bydesign[$part["part_id"]][] = $part;
 	$parts_bycolor[$part["ldraw_color_id"]][] = $part;
 }
-
-?>
-<fieldset>
-<legend>Find easily confused parts in set</legend>
-<form method="get" action=".">
- <input type="text" data-multiple name="set" placeholder="Set name or number" value="<?= implode(",", $set_numbers) ?>"><br>
- <label for="Blindness">Viewed with</label>
- <select name="type" id="Blindness">
-<?php
-foreach (array_merge($blindness_matrix, $blindness_brian) as $blindness_type=>$color_set)
-	echo "  <option value='$blindness_type'", $_GET["type"] == $blindness_type ? " selected" : "", ">$blindness_type</option>\n";
-?>
- </select> <label>under</label> <select name="lighting" id="Lighting"><option value="0">normal</option><option value="50" <?= array_key_exists("lighting", $_GET) && $_GET["lighting"] >= 50 ? "selected" : "" ?>>dim</option></select> <label for="Lighting">lighting</label><br>
- <button type="submit" name="view" value="parts">Show similar parts</button>
-<!-- <button type="submit" name="view" value="colors">All colors in set</button> -->
-</form>
-</fieldset>
-<?php
-if (array_key_exists("type", $_GET))
+if (array_key_exists("type", $_GET)) {
 	if (array_key_exists($_GET["type"], array_merge($blindness_matrix, $blindness_brian)))
 		$similar_color_bank = $_GET["type"];
 	else {
 		echo "<h3>Invalid color vision type selected.</h3>";
 		exit;
 	}
+}
+if (array_key_exists("set", $_GET) && count($set) === 0) {
+	echo "<h3>No valid set IDs given.</h3>";
+	exit;
+}
 ?>
 <br style="clear: both;">
 <?php foreach ($set as $set_json) {
