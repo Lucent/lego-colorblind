@@ -2,7 +2,7 @@
 <html>
  <head>
   <title>Differentiate Similar Color Lego Parts for Colorblindness</title>
-  <script src="js/awesomplete/awesomplete.js" async></script>
+  <script src="awesomplete/awesomplete.js" async></script>
   <script>
 window.onload = function() {
 var ajax = new XMLHttpRequest();
@@ -39,7 +39,7 @@ ajax.onload = function() {
 ajax.send();
 };
   </script>
-  <link href="js/awesomplete/awesomplete.css" rel="stylesheet" type="text/css">
+  <link href="awesomplete/awesomplete.css" rel="stylesheet" type="text/css">
   <link href="css/screen-default.css" rel="stylesheet" type="text/css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
  </head>
