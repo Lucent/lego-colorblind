@@ -144,5 +144,8 @@ if ($_GET["view"] === "parts")
 elseif ($_GET["view"] === "colors")
 	show_similar_colors($parts_bycolor, $similar_color_bank);
 ?>
+
+<p>Browser testing done with <a href="https://www.browserstack.com/"><img src="browserstack.svg" style="width: 8em;"></a></p>
+
  </body>
 </html>
