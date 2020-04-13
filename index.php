@@ -67,11 +67,11 @@ if (array_key_exists("set", $_GET)) {
 		if (trim($set) !== "")
 			$set_numbers[] = clean_set_number($set);
 
-	$set = [];
+	$sets = [];
 	foreach ($set_numbers as $set_number) {
 		$set_json = get_set_json($set_number, $api_key);
 		if ($set_json !== FALSE)
-			$set[] = json_decode($set_json, true)[0];
+			$sets[] = json_decode($set_json, true);
 	}
 }
 ?>
@@ -93,19 +93,21 @@ foreach (array_merge($blindness_matrix, $blindness_brian) as $blindness_type=>$c
 <?php
 
 $parts_byelement = [];
-foreach ($set as $set_json) {
-	if (empty($set_json["parts"])) {
-		echo "<h3>No inventory available for {$set_json["descr"]} yet, sorry.</h3>\n";
+foreach ($sets as $single_set) {
+	if (empty($single_set["results"])) {
+		echo "<h3>No inventory available for {$single_set["descr"]} yet, sorry.</h3>\n";
 		exit;
-	} else foreach ($set_json["parts"] as $part) {
-		if ($part["type"] === 1) {
+	} else foreach ($single_set["results"] as $part) {
+		unset($part["part"]["external_ids"]);
+		unset($part["color"]["external_ids"]);
+		if ($part["is_spare"] != 1) {
 			if (array_key_exists($part["element_id"], $parts_byelement))
-				$parts_byelement[$part["element_id"]]["qty"] += $part["qty"];
+				$parts_byelement[$part["element_id"]]["quantity"] += $part["quantity"];
 			else
 				$parts_byelement[$part["element_id"]] = $part;
 		} else {
 			if (array_key_exists($part["element_id"], $parts_byelement))
-				@$parts_byelement[$part["element_id"]]["extra"] += $part["qty"];
+				@$parts_byelement[$part["element_id"]]["extra"] += $part["quantity"];
 			else {
 				// Extra piece that isn't also a normal piece: brick separator 4654448
 			}
@@ -115,9 +117,10 @@ foreach ($set as $set_json) {
 
 $parts_bydesign = []; $parts_bycolor = [];
 foreach ($parts_byelement as $part) {
-	$parts_bydesign[$part["part_id"]][] = $part;
-	$parts_bycolor[$part["ldraw_color_id"]][] = $part;
+	$parts_bydesign[$part["part"]["part_num"]][] = $part;
+	$parts_bycolor[$part["color"]["id"]][] = $part;
 }
+
 if (array_key_exists("type", $_GET)) {
 	if (array_key_exists($_GET["type"], array_merge($blindness_matrix, $blindness_brian)))
 		$similar_color_bank = $_GET["type"];
@@ -130,12 +133,14 @@ if (array_key_exists("set", $_GET) && count($set) === 0) {
 	echo "<h3>No valid set IDs given.</h3>";
 	exit;
 }
-foreach ($set as $set_json) {
-	$parts_count = count_parts($set_json["parts"]);
+foreach ($sets as $set_json) {
+	$parts_count = count_parts($set_json["results"]);
 ?>
 <h2>
+<!--
  <img src="<?= $set_json["set_img_url"] ?>" style="float: left;">
- <span><?= $set_json["set_id"] ?><br><?= htmlspecialchars_decode($set_json["descr"]) ?><br><?= $parts_count[0] . "<sup>+" . $parts_count[1]  ?></sup> pieces</span>
+ <span><?= $set_json["set_id"] ?><br><?= htmlspecialchars_decode($set_json["descr"]) ?><br>
+ --><?= $parts_count[0] . "<sup>+" . $parts_count[1]  ?></sup> pieces</span>
 </h2>
 <?php
 }

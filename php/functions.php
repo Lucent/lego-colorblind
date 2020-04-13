@@ -59,10 +59,11 @@ function color_transform_matrix($o, $matrix) {
 
 function get_set_json($id, $api_key) {
 	$cache_folder = "cache" . DIRECTORY_SEPARATOR;
-	$request_params = [
-		"key" => $api_key,
-		"format" => "json",
-		"set" => $id
+	$opts = [
+		"http" => [
+			"header" =>	"Authorization: key $api_key\r\n" .
+						"Accept: application/json"
+		]
 	];
 
 	$cache_file = $cache_folder . $id;
@@ -77,8 +78,8 @@ function get_set_json($id, $api_key) {
 		}
 	}
 
-	$request = "http://rebrickable.com/api/get_set_parts?" . http_build_query($request_params);
-	$set_json = file_get_contents($request);
+	$request = "https://rebrickable.com/api/v3/lego/sets/{$id}/parts/?page_size=1000";
+	$set_json = file_get_contents($request, false, stream_context_create($opts));
 	write_cache_miss($cache_folder . "cache_miss", $id);
 
 	if ($set_json == "NOSET")
@@ -153,10 +154,10 @@ function count_parts($parts) {
 	$extra = 0;
 
 	foreach($parts as $part) {
-		if ($part["type"] === 1)
-			$regular += $part["qty"];
+		if ($part["is_spare"] != 1)
+			$regular += $part["quantity"];
 		else
-			$extra += $part["qty"];
+			$extra += $part["quantity"];
 	}
 
 	return [$regular, $extra];
@@ -175,14 +176,14 @@ function show_similar_colored_parts($parts_bydesign, $similar_color_bank) {
 	// Make similar color banks for each part
 	$confusing_parts_count = 0;
 	foreach ($parts_bydesign as $design) {
-		$similar_color_lists = make_similar_color_list($similar_color_bank, array_column($design, "ldraw_color_id"));
+		$similar_color_lists = make_similar_color_list($similar_color_bank, array_column(array_column($design, "color"), "id"));
 		if (count($similar_color_lists)) {
 			echo "\n<h3>" . $design[0]["part_name"] . "</h3>\n";
 			foreach ($similar_color_lists as $color_list) {
 				echo "<section>\n";
 				foreach ($design as $part) {
-					if (in_array($part["ldraw_color_id"], $color_list) === TRUE) {
-						echo "<figure><img src='" . $part["part_img_url"] . "'><figcaption>" . $part["color_name"] . " (" .  $part["qty"];
+					if (in_array($part["color"]["id"], $color_list) === TRUE) {
+						echo "<figure><img src='" . $part["part"]["part_img_url"] . "'><figcaption>" . $part["color"]["name"] . " (" .  $part["quantity"];
 						if (array_key_exists("extra", $part))
 							echo "<sup>+" . $part["extra"] . "</sup>";
 						echo ")</figcaption></figure>\n";
@@ -203,14 +204,14 @@ function show_similar_colored_parts($parts_bydesign, $similar_color_bank) {
 function show_similar_colors($parts_bycolor, $similar_color_bank) {
 	global $ldraw_colors;
 	foreach ($parts_bycolor as &$color_arr)
-		$color_arr["qty"] = array_sum(array_column($color_arr, "qty"));
+		$color_arr["quantity"] = array_sum(array_column($color_arr, "quantity"));
 
 	$similar_color_lists = make_similar_color_list($similar_color_bank, array_keys($parts_bycolor));
 	foreach ($similar_color_lists as $color_list) {
 		echo "<section>\n";
 		foreach ($color_list as $ldraw_color) {
 			$color = rgb2hex($ldraw_colors[$ldraw_color]["RGBA"]);
-			echo "<figure><div style='height: 100px; width: 100px; background-color: $color;'></div><figcaption>" . $ldraw_colors[$ldraw_color]["Name"] . " (" . $parts_bycolor[$ldraw_color]["qty"];
+			echo "<figure><div style='height: 100px; width: 100px; background-color: $color;'></div><figcaption>" . $ldraw_colors[$ldraw_color]["Name"] . " (" . $parts_bycolor[$ldraw_color]["quantity"];
 //			if (array_key_exists("extra", $part))
 //				echo "<sup>+" . $part["extra"] . "</sup>";
 			echo ")</figcaption></figure>\n";
