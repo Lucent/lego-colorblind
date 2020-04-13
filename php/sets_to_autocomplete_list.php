@@ -5,7 +5,7 @@ $autocomplete_list = [];
 
 $line = fgetcsv($fp); // Burn first line
 while (($line = fgetcsv($fp)) !== FALSE) {
-	list($set_id, $year, $pieces, $t1, $t2, $t3, $descr) = $line;
+	list($set_id, $descr, $year, $theme, $pieces) = $line;
 	$autocomplete_list[] = $set_id . " [" . $descr . " (" . $year . ")]";
 //		"id" => $set_id,
 //		"name" => $descr,
