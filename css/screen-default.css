@@ -1,13 +1,13 @@
 body	{ background-color: #F4F4F4; }
 fieldset	{ border: medium solid #AAA; display: inline-block; padding: 1em; }
 legend	{ font-family: sans-serif; font-size: xx-large; }
-h2		{ font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif; width: 20em; background-color: white; border: thin solid #CCC; padding: 1em; }
-h2 img	{ margin-right: 1ex; }
+h2		{ font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif; width: 20em; background-color: white; border: thin solid #CCC; padding: 1em; display: flex; align-items: center; }
+h2 img	{ margin-right: 1ex; width: 50%; }
 h3		{ font-family: sans-serif; font-size: large; margin-top: 1em; margin-bottom: 0; }
 section	{ border: thin solid black; padding: 1ex; background-color: white; margin: 1ex; display: inline-block; }
 figure	{ display: inline-block; margin: 1ex; }
 figcaption	{ font-size: small; font-family: sans-serif; margin-top: 1ex; text-align: center; }
-img		{ height: 4em; vertical-align: middle; }
+figure img	{ height: 6em; vertical-align: middle; }
 input[type=text]	{ font-size: x-large; width: 20em; margin-bottom: 1em; }
 button				{ font-size: x-large; margin-top: 1em; }
 label, select		{ font-size: large; }

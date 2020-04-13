@@ -57,7 +57,7 @@ function color_transform_matrix($o, $matrix) {
     return [$r<0?0:($r<255?$r:255), $g<0?0:($g<255?$g:255), $b<0?0:($b<255?$b:255), $a<0?0:($a<255?$a:255)];
 }
 
-function get_set_json($id, $api_key) {
+function get_set_json($id, $api_key, $url) {
 	$cache_folder = "cache" . DIRECTORY_SEPARATOR;
 	$opts = [
 		"http" => [
@@ -66,7 +66,7 @@ function get_set_json($id, $api_key) {
 		]
 	];
 
-	$cache_file = $cache_folder . $id;
+	$cache_file = $cache_folder . $url . $id;
 	if (file_exists($cache_file)) {
 		$fh = fopen($cache_file, "r");
 		$file_time = trim(fgets($fh));
@@ -78,7 +78,7 @@ function get_set_json($id, $api_key) {
 		}
 	}
 
-	$request = "https://rebrickable.com/api/v3/lego/sets/{$id}/parts/?page_size=1000";
+	$request = "https://rebrickable.com/api/v3/lego/sets/{$id}/{$url}?page_size=1000";
 	$set_json = file_get_contents($request, false, stream_context_create($opts));
 	write_cache_miss($cache_folder . "cache_miss", $id);
 
@@ -178,7 +178,7 @@ function show_similar_colored_parts($parts_bydesign, $similar_color_bank) {
 	foreach ($parts_bydesign as $design) {
 		$similar_color_lists = make_similar_color_list($similar_color_bank, array_column(array_column($design, "color"), "id"));
 		if (count($similar_color_lists)) {
-			echo "\n<h3>" . $design[0]["part_name"] . "</h3>\n";
+			echo "\n<h3>" . $design[0]["part"]["name"] . "</h3>\n";
 			foreach ($similar_color_lists as $color_list) {
 				echo "<section>\n";
 				foreach ($design as $part) {

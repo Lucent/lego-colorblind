@@ -69,7 +69,7 @@ if (array_key_exists("set", $_GET)) {
 
 	$sets = [];
 	foreach ($set_numbers as $set_number) {
-		$set_json = get_set_json($set_number, $api_key);
+		$set_json = get_set_json($set_number, $api_key, "parts/");
 		if ($set_json !== FALSE)
 			$sets[] = json_decode($set_json, true);
 	}
@@ -137,10 +137,14 @@ foreach ($sets as $set_json) {
 	$parts_count = count_parts($set_json["results"]);
 ?>
 <h2>
-<!--
- <img src="<?= $set_json["set_img_url"] ?>" style="float: left;">
- <span><?= $set_json["set_id"] ?><br><?= htmlspecialchars_decode($set_json["descr"]) ?><br>
- --><?= $parts_count[0] . "<sup>+" . $parts_count[1]  ?></sup> pieces</span>
+<?php
+$descr_json = get_set_json($set_number, $api_key, "/");
+if ($descr_json !== FALSE)
+	$description = json_decode($descr_json, true);
+?>
+ <img src="<?= $description["set_img_url"] ?>">
+ <span><big><?= $description["set_num"] ?></big><br><a href="<?= $description["set_url"] ?>"><?= htmlspecialchars_decode($description["name"]) ?> (<?= $description["year"] ?>)</a><br>
+ <?= $description["num_parts"] . " / " . $parts_count[0] . "<sup>+" . $parts_count[1]  ?></sup> parts</span>
 </h2>
 <?php
 }
