@@ -13,9 +13,10 @@ ajax.onload = function() {
 		maxItems: 25,
 		autoFirst: true,
 
-		filter: function(text, input) {
-			var regex = /^([^\s]+)\s([^(]+)/;
-			var parts = text.match(regex);
+		filter: function(autocomplete_line, input) {
+			var autocomplete_noyear = autocomplete_line.slice(0, -7);
+			var regex = /^([^\s]+)\s(.*)$/;
+			var parts = autocomplete_noyear.match(regex);
 			input = input.match(/[^,]*$/)[0].trim();
 			// Only match set numbers from the start, but match words anywhere
 			return parts[1].indexOf(input) === 0 ||
@@ -28,10 +29,7 @@ ajax.onload = function() {
 			this.input.value = before + text.match(/^[^\s]+/)[0] + ", ";
 		},
 
-		sort: function(a, b) {
-			// Sort by year released, descending
-			return parseInt(b.substr(-6, 4), 10) - parseInt(a.substr(-6, 4), 10);
-		},
+		sort: false,
 
 		list: list
 	});

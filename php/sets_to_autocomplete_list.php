@@ -6,11 +6,10 @@ $autocomplete_list = [];
 $line = fgetcsv($fp); // Burn first line
 while (($line = fgetcsv($fp)) !== FALSE) {
 	list($set_id, $descr, $year, $theme, $pieces) = $line;
-	$autocomplete_list[] = $set_id . " [" . $descr . " (" . $year . ")]";
-//		"id" => $set_id,
-//		"name" => $descr,
-//		"year" => $year
+	$autocomplete_list[] = [$pieces, $set_id . " " . $descr . " (" . $year . ")"];
 }
+array_multisort(array_column($autocomplete_list, 0), SORT_DESC, $autocomplete_list);
+$autocomplete = array_column($autocomplete_list, 1);
 
-echo json_encode($autocomplete_list);
+echo json_encode($autocomplete);
 ?>
