@@ -70,7 +70,7 @@ function get_set_json($id, $api_key, $url) {
 	if (file_exists($cache_file)) {
 		$fh = fopen($cache_file, "r");
 		$file_time = trim(fgets($fh));
-		if ($file_time > strtotime("-1 week"))
+		if ($file_time > strtotime("-4 week"))
 			return fread($fh, filesize($cache_file));
 		else {
 			fclose($fh);
@@ -179,6 +179,7 @@ function show_similar_colored_parts($parts_bydesign, $similar_color_bank) {
 		$similar_color_lists = make_similar_color_list($similar_color_bank, array_column(array_column($design, "color"), "id"));
 		if (count($similar_color_lists)) {
 			echo "\n<h3>" . $design[0]["part"]["name"] . "</h3>\n";
+			echo "<article>\n";
 			foreach ($similar_color_lists as $color_list) {
 				echo "<section>\n";
 				foreach ($design as $part) {
@@ -191,14 +192,15 @@ function show_similar_colored_parts($parts_bydesign, $similar_color_bank) {
 				}
 				echo "</section>\n";
 			}
+			echo "</article>\n";
 			$confusing_parts_count++;
 		}
 	}
 
 	if (empty($parts_bydesign))
-		echo "<h3>Each part design in this set occurs in a unique color.</h3>\n";
+		echo "<h4>Each part design in this set occurs in a unique color.</h4>\n";
 	elseif ($confusing_parts_count === 0)
-		echo "<h3>No parts in this set occur in similar, confusing colors for the chosen color vision type and lighting.</h3>\n";
+		echo "<h4>No parts in this set occur in similar, confusing colors for the chosen color vision type and lighting.</h4>\n";
 }
 
 function show_similar_colors($parts_bycolor, $similar_color_bank) {
