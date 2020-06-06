@@ -1,13 +1,13 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
  <head>
   <title>Find Similar Color Lego Parts for Colorblindness</title>
-  <link href="css/screen-default.css" rel="stylesheet" type="text/css">
-  <script src="awesomplete/awesomplete.js" async></script>
+  <link href="css/screen-default.css" rel="stylesheet">
   <link href="awesomplete/awesomplete.css" rel="stylesheet">
+  <script src="awesomplete/awesomplete.js" async></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script type="module" src="client/filter.js"></script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-163754119-1"></script>
+  <script defer src="https://www.googletagmanager.com/gtag/js?id=UA-163754119-1"></script>
   <script>
   window.dataLayer = window.dataLayer || [];
   function gtag() { dataLayer.push(arguments); }
@@ -23,48 +23,56 @@ require_once "php/color-blind.php";
 require_once "php/functions.php";
 require_once "apikey.php";
 
+$darken_factor = 0;
 if (array_key_exists("lighting", $_GET))
 	if (is_numeric($_GET["lighting"]))
 		$darken_factor = $_GET["lighting"];
 
+$get_type = "normal vision";
+if (array_key_exists("type", $_GET))
+	$get_type = $_GET["type"];
+
 if (array_key_exists("set", $_GET)) {
 	if (strpos($_GET["set"], ","))
-		$sets = explode(",", $_GET["set"]);
+		$get_sets = explode(",", $_GET["set"]);
 	else
-		$sets = explode(" ", $_GET["set"]);
-	$sets = array_unique($sets);
+		$get_sets = explode(" ", $_GET["set"]);
+	$get_sets = array_unique($get_sets);
 } else {
-	$sets = ["10197-1"];
+	$get_sets = [];
 }
 
 $set_numbers = [];
-foreach ($sets as $set)
+foreach ($get_sets as $set)
 	if (trim($set) !== "")
 		$set_numbers[] = clean_set_number($set);
 
+?>
+<aside>
+<h1>Find similar color parts in set</h1>
+<form method="get" action=".">
+ <div><input type="search" data-multiple name="set" placeholder="set name or number" value="<?= implode(",", $set_numbers) ?>"></div>
+ <p><label for="Blindness">viewed with</label>
+ <select name="type" id="Blindness">
+<?php
+foreach (array_merge($blindness_matrix, $blindness_brian) as $blindness_type=>$color_set)
+	echo "  <option value='$blindness_type'", $get_type == $blindness_type ? " selected" : "", ">$blindness_type</option>\n";
+?>
+ </select> <label>under</label> <select name="lighting" id="Lighting"><option value="0">normal</option><option value="50" <?= $darken_factor >= 50 ? "selected" : "" ?>>dim</option></select> <label for="Lighting">light</label></p>
+ <button type="submit" name="view" value="parts">Show similar parts</button>
+<!-- <button type="submit" name="view" value="colors">All colors in set</button> -->
+</form>
+</aside>
+<br><progress id="Progress" max="100"></progress>
+<?php
+flush_output();
 $sets = [];
 foreach ($set_numbers as $set_number) {
 	$set_json = get_set_json($set_number, $api_key, "parts/");
 	if ($set_json !== FALSE)
 		$sets[] = json_decode($set_json, true);
 }
-?>
-<aside>
-<h1>Find similar color parts in set</h1>
-<form method="get" action=".">
- <div><input type="text" data-multiple name="set" placeholder="Set name or number" value="<?= implode(",", $set_numbers) ?>"></div>
- <p><label for="Blindness">viewed with</label>
- <select name="type" id="Blindness">
-<?php
-foreach (array_merge($blindness_matrix, $blindness_brian) as $blindness_type=>$color_set)
-	echo "  <option value='$blindness_type'", $_GET["type"] == $blindness_type ? " selected" : "", ">$blindness_type</option>\n";
-?>
- </select> <label>under</label> <select name="lighting" id="Lighting"><option value="0">normal</option><option value="50" <?= array_key_exists("lighting", $_GET) && $_GET["lighting"] >= 50 ? "selected" : "" ?>>dim</option></select> <label for="Lighting">light</label></p>
- <button type="submit" name="view" value="parts">Show similar parts</button>
-<!-- <button type="submit" name="view" value="colors">All colors in set</button> -->
-</form>
-</aside>
-<?php
+set_progress("Progress", 75);
 
 $parts_byelement = [];
 foreach ($sets as $single_set) {
@@ -95,15 +103,11 @@ foreach ($parts_byelement as $part) {
 	$parts_bycolor[$part["color"]["id"]][] = $part;
 }
 
-if (array_key_exists("type", $_GET)) {
-	if (array_key_exists($_GET["type"], array_merge($blindness_matrix, $blindness_brian)))
-		$similar_color_bank = $_GET["type"];
-	else {
-		echo "<h4>Invalid color vision type selected.</h4>";
-		exit;
-	}
-} else {
-	$similar_color_bank = "normal vision";
+if (array_key_exists($get_type, array_merge($blindness_matrix, $blindness_brian)))
+	$similar_color_bank = $get_type;
+else {
+	echo "<h4>Invalid color vision type selected.</h4>";
+	exit;
 }
 
 /*
@@ -116,9 +120,9 @@ foreach ($sets as $set_json) {
 ?>
 <h2>
 <?php
-$descr_json = get_set_json($set_number, $api_key, "/");
-if ($descr_json !== FALSE)
-	$description = json_decode($descr_json, true);
+	$descr_json = get_set_json($set_number, $api_key, "/");
+	if ($descr_json !== FALSE)
+		$description = json_decode($descr_json, true);
 ?>
  <img src="<?= $description["set_img_url"] ?>">
  <span><big><?= $description["set_num"] ?></big><br><a href="<?= $description["set_url"] ?>"><?= htmlspecialchars_decode($description["name"]) ?> (<?= $description["year"] ?>)</a><br>
@@ -126,14 +130,22 @@ if ($descr_json !== FALSE)
 </h2>
 <?php
 }
-if ($_GET["view"] === "parts" || !array_key_exists("view", $_GET))
-	show_similar_colored_parts($parts_bydesign, $similar_color_bank);
-elseif ($_GET["view"] === "colors")
+set_progress("Progress", 100);
+
+$view = "parts";
+if ($get_sets == []) { ?>
+	<p>Does colorblindness make it difficult to see whether parts in a set are actually different colors?<br><br>
+	Enter a set name or number to see a list of parts (and their count) in colors similar enough to be confusing for the selected color deficiency. <a href="/set=10197-1">Try a sample</a>.</p>
+<?php
+} else if ($_GET["view"] === "colors")
 	show_similar_colors($parts_bycolor, $similar_color_bank);
+else
+	show_similar_colored_parts($parts_bydesign, $similar_color_bank);
 ?>
 
+<script>document.getElementById("Progress").style.display = "none";</script>
 <footer>
-<addr>Created by <a href="//dayah.com">Michael Dayah</a>. Parts retreived from <a href="https://rebrickable.com/api/">Rebrickable API</a>. Browser testing done with <a href="https://www.browserstack.com/"><img src="browserstack.svg" style="width: 8em;"></a></addr>
+<addr>Created by <a href="//dayah.com">Michael Dayah</a>. Parts retreived from <a href="https://rebrickable.com/api/">Rebrickable API</a>. Browser testing done with <a href="https://www.browserstack.com/"><img src="browserstack.svg" style="height: 2em;"></a></addr>
 </footer>
 
  </body>

@@ -221,3 +221,14 @@ function show_similar_colors($parts_bycolor, $similar_color_bank) {
 		echo "</section>\n";
 	}
 }
+
+function set_progress($id, $value) {
+	echo "<script>document.getElementById('", $id, "').value = ", $value, ";</script>\n";
+	flush_output();
+}
+
+function flush_output() {
+	$junk = "<!-- long string to flush output buffer -->";
+	echo str_repeat($junk, 4096 / strlen($junk)), "\n";
+	ob_end_flush(); flush();
+}

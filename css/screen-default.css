@@ -1,23 +1,24 @@
 :root	{
 	--bordercolor: #d7abab;
 }
-
+*			{ box-sizing: border-box; }
 html		{ border-left: 1em solid darkred; }
 body		{ background-color: rgb(240, 243, 245); font-family: -apple-system, BlinkMacSystemFont, avenir next, avenir, helvetica neue, helvetica, Ubuntu, roboto, noto, segoe ui, arial, sans-serif; }
 aside		{ background-color: white; padding: 2rem; margin: auto; display: inline-block; margin: 1rem; }
 h1			{ font-weight: normal; margin-top: 0; font-size: 2.5em; letter-spacing: -0.04em; margin-bottom: 0; }
 h1, h3, big	{ color: #600; }
-form input	{ background-color: rgb(240, 243, 245); border-radius: 3px; border: thin solid #CCC; font-size: 2em; width: 100%; padding: 0.5rem 1rem; box-sizing: border-box; }
+form input	{ background-color: rgb(240, 243, 245); border-radius: 3px; border: thin solid #CCC; font-size: 2em; width: 100%; padding: 0.5rem 1rem; }
 .awesomplete{ margin: 2rem 0; }
 p			{ font-size: 1.4em; color: #888; }
 p > select	{ font-size: inherit; border: none; border-bottom: medium solid #333; }
 button		{ float: right; text-transform: uppercase; border-radius: 6px; background-color: darkred; color: white; border: none; padding: 1em 1.5em; margin-top: 1em; letter-spacing: 0.2em; }
 button:focus,
 button:hover{ background-color: #B00; }
-h4			{ margin-left: 1rem; font-size: x-large; background-color: white; padding: 1rem; display: inline-block; border: medium solid var(--bordercolor); color: darkred; }
-
+h4			{ margin: 1rem; font-size: x-large; background-color: white; padding: 1rem 2rem; display: inline-block; color: darkred; font-weight: normal; border-radius: 1em; background-color: #fee; }
+progress, body > p	{ width: 35.75rem; margin-left: 1rem; }
+body > p	{ margin-left: 2rem; }
 h2			{ width: 21em; background-color: white; padding: 2rem; margin: 1rem; display: flex; align-items: center; margin-bottom: 2rem; }
-h2 img		{ margin-right: 1ex; width: 50%; }
+h2 img		{ margin-right: 1ex; width: 10em; }
 h2 big		{ font-size: 3rem; }
 h3			{ font-size: large; font-weight: normal; margin-top: 1rem; margin-left: 1rem; margin-bottom: 0; display: inline-block; border-bottom: medium solid var(--bordercolor); border-right: medium solid var(--bordercolor); padding: 0.2rem 0.5rem 0.2rem 0.5rem; }
 article		{ margin: 0.5rem; border-left: medium solid var(--bordercolor); margin: 0 0 0 1rem; padding: 0.5rem 0 0.5rem 0.5rem; }
@@ -30,6 +31,9 @@ footer		{ margin: 1rem; color: #777; }
 addr		{ font-size: 0.7em; font-weight: 600; }
 addr img	{ vertical-align: top; }
 
-h2, h4		{ border-radius: 6px; }
-section, h4	{ box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); border: thin solid #efbdbd; }
+h2			{ border-radius: 6px; }
+section, h4, input	{ box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); border: thin solid #efbdbd; }
 aside, h2	{ box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23); border-radius: 18px; border: thin solid #ffbdbd; }
+@media screen and (max-width: 40rem) {
+	h2		{ flex-direction: column; width: auto; }
+}
