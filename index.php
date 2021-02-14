@@ -59,7 +59,7 @@ foreach (array_merge($blindness_matrix, $blindness_brian) as $blindness_type=>$c
 	echo "  <option value='$blindness_type'", $get_type == $blindness_type ? " selected" : "", ">$blindness_type</option>\n";
 ?>
  </select> <label>under</label> <select name="lighting" id="Lighting"><option value="0">normal</option><option value="50" <?= $darken_factor >= 50 ? "selected" : "" ?>>dim</option></select> <label for="Lighting">light</label></p>
- <button type="submit" name="view" value="parts">Show similar parts</button>
+ <button type="submit">Show similar parts</button>
 <!-- <button type="submit" name="view" value="colors">All colors in set</button> -->
 </form>
 </aside>
@@ -71,6 +71,12 @@ foreach ($set_numbers as $set_number) {
 	$set_json = get_set_json($set_number, $api_key, "parts/");
 	if ($set_json !== FALSE)
 		$sets[] = json_decode($set_json, true);
+	else {
+		echo "<h4>Set not found</h4>";
+		set_progress("Progress", 100);
+		echo '<script>document.getElementById("Progress").style.display = "none";</script>';
+		exit;
+	}
 }
 set_progress("Progress", 75);
 
@@ -137,7 +143,7 @@ if ($get_sets == []) { ?>
 	<p>Does colorblindness make it difficult to see whether parts in a set are actually different colors?<br><br>
 	Enter a set name or number to see a list of parts (and their count) in colors similar enough to be confusing for the selected color deficiency. <a href="/set=10197-1">Try a sample</a>.</p>
 <?php
-} else if ($_GET["view"] === "colors")
+} else if (array_key_exists("view", $_GET) && $_GET["view"] === "colors")
 	show_similar_colors($parts_bycolor, $similar_color_bank);
 else
 	show_similar_colored_parts($parts_bydesign, $similar_color_bank);

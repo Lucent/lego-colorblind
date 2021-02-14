@@ -80,9 +80,11 @@ function get_set_json($id, $api_key, $url) {
 
 	$request = "https://rebrickable.com/api/v3/lego/sets/{$id}/{$url}?page_size=1000";
 	$set_json = file_get_contents($request, false, stream_context_create($opts));
+//	$set_json = curl_get_contents($request, $opts["http"]);
+	$json = json_decode($set_json, true);
 	write_cache_miss($cache_folder . "cache_miss", $id);
 
-	if ($set_json == "NOSET")
+	if (array_key_exists("count", $json) && $json["count"] == 0)
 		return FALSE;
 	else {
 		$fh = fopen($cache_file, "w");
@@ -232,3 +234,17 @@ function flush_output() {
 	echo str_repeat($junk, 4096 / strlen($junk)), "\n";
 	ob_end_flush(); flush();
 }
+
+function curl_get_contents($url, $opts) {
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, $opts);
+	curl_setopt($ch, CURLOPT_HEADER, 0);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_INTERFACE, "72.14.190.37");
+	$output = curl_exec($ch);
+	curl_close($ch);
+	return $output;
+}
+
+?>
