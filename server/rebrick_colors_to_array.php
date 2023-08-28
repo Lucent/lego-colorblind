@@ -1,6 +1,6 @@
 <?php
 // wget colors.csv.gz from rebrickable
-$fp = fopen("data/colors.csv", "r");
+$fp = fopen(__DIR__ . "/../data/colors.csv", "r");
 $ldraw_colors = [];
 $line = fgetcsv($fp); // Burn first line
 while (($line = fgetcsv($fp, 0, ",")) !== FALSE) {

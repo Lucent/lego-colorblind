@@ -17,11 +17,11 @@
  </head>
  <body>
 <?php
-require_once "php/color_difference.class.php";
-require_once "php/rebrick_colors_to_array.php";
-require_once "php/color-blind.php";
-require_once "php/functions.php";
-require_once "apikey.php";
+require_once "../server/color_difference.class.php";
+require_once "../server/rebrick_colors_to_array.php";
+require_once "../server/color-blind.php";
+require_once "../server/functions.php";
+require_once "../apikey.php";
 
 $darken_factor = 0;
 if (array_key_exists("lighting", $_GET))
@@ -151,7 +151,7 @@ else
 
 <script>document.getElementById("Progress").style.display = "none";</script>
 <footer>
-<addr>Created by <a href="//dayah.com">Michael Dayah</a>. Parts retreived from <a href="https://rebrickable.com/api/">Rebrickable API</a>. Browser testing done with <a href="https://www.browserstack.com/"><img src="browserstack.svg" style="height: 2em;"></a></addr>
+<addr>Created by <a href="//dayah.com">Michael Dayah</a>. Contact color at brick.design.<br>Parts retreived from <a href="https://rebrickable.com/api/">Rebrickable API</a>. Browser testing done with <a href="https://www.browserstack.com/"><img src="browserstack.svg" style="height: 2em;"></a></addr>
 </footer>
 
  </body>

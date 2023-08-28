@@ -15,7 +15,7 @@ function replace(text) {
 }
 
 async function init() {
-	const sets_file = await fetch("cache/set_autocomplete_list.json");
+	const sets_file = await fetch("set_autocomplete_list.json");
 	const sets_json = await sets_file.json();
 
 	new Awesomplete(document.querySelector("input[data-multiple]"), {

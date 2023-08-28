@@ -129,9 +129,9 @@ id,name,rgb,is_trans
 1001,Medium Violet,9391E4,f
 1002,Glitter Trans-Neon Green,C0F500,t
 1003,Glitter Trans-Light Blue,68BCC5,t
-1004,Trans Flame Yellowish Orange,FCB76D,t
-1005,Trans Fire Yellow,FBE890,t
-1006,Trans Light Royal Blue,B4D4F7,t
+1004,Trans-Flame Yellowish Orange,FCB76D,t
+1005,Trans-Fire Yellow,FBE890,t
+1006,Trans-Light Royal Blue,B4D4F7,t
 1007,Reddish Lilac,8E5597,f
 1008,Vintage Blue,039CBD,f
 1009,Vintage Green,1E601E,f
@@ -182,4 +182,10 @@ id,name,rgb,is_trans
 1054,Trans-Medium Reddish Violet Opal,CE1D9B,t
 1055,Trans-Clear Opal,FCFCFC,t
 1056,Trans-Brown Opal,583927,t
+1057,Trans-Light Bright Green,C9E788,t
+1058,Trans-Light Green,94E5AB,t
+1059,Trans-Purple Opal,8320B7,t
+1060,Trans-Green Opal,84B68D,t
+1061,Trans-Dark Blue Opal,0020A0,t
+1062,Vibrant Yellow,EBD800,f
 9999,[No Color/Any Color],05131D,f

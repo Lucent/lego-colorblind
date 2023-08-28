@@ -58,7 +58,7 @@ function color_transform_matrix($o, $matrix) {
 }
 
 function get_set_json($id, $api_key, $url) {
-	$cache_folder = "cache" . DIRECTORY_SEPARATOR;
+	$cache_folder = "../cache" . DIRECTORY_SEPARATOR;
 	$opts = [
 		"http" => [
 			"header" =>	"Authorization: key $api_key\r\n" .
@@ -79,8 +79,10 @@ function get_set_json($id, $api_key, $url) {
 	}
 
 	$request = "https://rebrickable.com/api/v3/lego/sets/{$id}/{$url}?page_size=1000";
+//	echo $request;
 	$set_json = file_get_contents($request, false, stream_context_create($opts));
 //	$set_json = curl_get_contents($request, $opts["http"]);
+//	print_r($set_json);
 	$json = json_decode($set_json, true);
 	write_cache_miss($cache_folder . "cache_miss", $id);
 
@@ -103,6 +105,7 @@ function write_cache_miss($file, $set_id) {
 
 function make_similar_color_list($bank, $colors) {
 	global $ldraw_colors;
+	//print_r($ldraw_colors);
 	// Use 20 and 10197 to diagnose chaining, 6 pairs of chains
 	// 13 gets dark green and red brown in deuter brian
 	$THRESHOLD = 13;

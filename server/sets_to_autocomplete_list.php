@@ -1,6 +1,6 @@
 <?php
 header("Content-Type: application/json");
-$fp = fopen("../data/sets.csv", "r");
+$fp = fopen(__DIR__ . "/../data/sets.csv", "r");
 $autocomplete_list = [];
 
 $line = fgetcsv($fp); // Burn first line
