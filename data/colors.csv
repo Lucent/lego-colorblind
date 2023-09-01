@@ -35,7 +35,7 @@ id,name,rgb,is_trans
 34,Trans-Green,84B68D,t
 35,Trans-Bright Green,D9E4A7,t
 36,Trans-Red,C91A09,t
-40,Trans-Black,635F52,t
+40,Trans-Brown,635F52,t
 41,Trans-Light Blue,AEEFEC,t
 42,Trans-Neon Green,F8F184,t
 43,Trans-Very Lt Blue,C1DFF0,t
@@ -60,19 +60,19 @@ id,name,rgb,is_trans
 75,Speckle Black-Copper,05131D,f
 76,Speckle DBGray-Silver,6C6E68,f
 77,Light Pink,FECCCF,f
-78,Light Flesh,F6D7B3,f
+78,Light Nougat,F6D7B3,f
 79,Milky White,FFFFFF,f
 80,Metallic Silver,A5A9B4,f
 81,Metallic Green,899B5F,f
 82,Metallic Gold,DBAC34,f
-84,Medium Dark Flesh,CC702A,f
+84,Medium Nougat,AA7D55,f
 85,Dark Purple,3F3691,f
-86,Dark Flesh,7C503A,f
+86,Light Brown,7C503A,f
 89,Royal Blue,4C61DB,f
-92,Flesh,D09168,f
+92,Nougat,D09168,f
 100,Light Salmon,FEBABD,f
 110,Violet,4354A3,f
-112,Blue-Violet,6874CA,f
+112,Medium Bluish Violet,6874CA,f
 114,Glitter Trans-Dark Pink,DF6695,t
 115,Medium Lime,C7D23C,f
 117,Glitter Trans-Clear,FFFFFF,t
@@ -84,7 +84,7 @@ id,name,rgb,is_trans
 133,Speckle Black-Gold,05131D,f
 134,Copper,AE7A59,f
 135,Pearl Light Gray,9CA3A8,f
-137,Metal Blue,7988A1,f
+137,Pearl Sand Blue,7988A1,f
 142,Pearl Light Gold,DCBC81,f
 143,Trans-Medium Blue,CFE2F7,t
 148,Pearl Dark Gray,575857,f
@@ -179,7 +179,7 @@ id,name,rgb,is_trans
 1051,Pastel Blue,5AC4DA,f
 1052,Glitter Trans-Orange,F08F1C,t
 1053,Trans-Blue Opal,68BCC5,t
-1054,Trans-Medium Reddish Violet Opal,CE1D9B,t
+1054,Trans-Dark Pink Opal,CE1D9B,t
 1055,Trans-Clear Opal,FCFCFC,t
 1056,Trans-Brown Opal,583927,t
 1057,Trans-Light Bright Green,C9E788,t
@@ -188,4 +188,45 @@ id,name,rgb,is_trans
 1060,Trans-Green Opal,84B68D,t
 1061,Trans-Dark Blue Opal,0020A0,t
 1062,Vibrant Yellow,EBD800,f
+1063,Pearl Copper,B46A00,f
+1064,Fabuland Red,FF8014,f
+1065,Reddish Gold,AC8247,f
+1066,Curry,DD982E,f
+1067,Dark Nougat,AD6140,f
+1068,Reddish Orange,EE5434,f
+1069,Pearl Red,D60026,f
+1070,Pearl Blue,0059A3,f
+1071,Pearl Green,008E3C,f
+1072,Pearl Brown,57392C,f
+1073,Pearl Black,0A1327,f
+1074,Duplo Blue,009ECE,f
+1075,Duplo Medium Blue,3E95B6,f
+1076,Duplo Lime,FFF230,f
+1077,Fabuland Lime,78FC78,f
+1078,Duplo Medium Green,468A5F,f
+1079,Duplo Light Green,60BA76,f
+1080,Light Tan,F3C988,f
+1081,Rust Orange,872B17,f
+1082,Clikits Pink,FE78B0,f
+1083,Two-tone Copper,945148,f
+1084,Two-tone Gold,AB673A,f
+1085,Two-tone Silver,737271,f
+1086,Pearl Lime,6A7944,f
+1087,Duplo Pink,FF879C,f
+1088,Medium Brown,755945,f
+1089,Warm Tan,CCA373,f
+1090,Duplo Turquoise,3FB69E,f
+1091,Warm Yellowish Orange,FFCB78,f
+1092,Metallic Copper,764D3B,f
+1093,Light Lilac,9195CA,f
+1094,Trans-Medium Purple,8D73B3,f
+1095,Trans-Black,635F52,t
+1096,Glitter Trans-Bright Green,D9E4A7,t
+1097,Glitter Trans-Medium Purple,8D73B3,t
+1098,Glitter Trans-Green,84B68D,t
+1099,Glitter Trans-Pink,E4ADC8,t
+1100,Clikits Yellow,FFCF0B,f
+1101,Duplo Dark Purple,5F27AA,f
+1102,Trans-Neon Red,FF0040,t
+1103,Pearl Titanium,3E3C39,f
 9999,[No Color/Any Color],05131D,f

@@ -1,4 +1,6 @@
 <?php
+// https://github.com/renasboy/php-color-difference/blob/master/lib/color_difference.class.php
+// added $darken_fator
 class color_difference {
 
     public function deltaECIE2000 ($rgb1, $rgb2) {
