@@ -7,13 +7,7 @@
   <script src="awesomplete/awesomplete.js" async></script>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script type="module" src="client/filter.js"></script>
-  <script defer src="https://www.googletagmanager.com/gtag/js?id=UA-163754119-1"></script>
-  <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag() { dataLayer.push(arguments); }
-  gtag('js', new Date());
-  gtag('config', 'UA-163754119-1');
-  </script>
+  <script defer data-domain="color.brick.design" src="https://plausible.io/js/script.js"></script>
  </head>
  <body>
 <?php

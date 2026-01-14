@@ -1,0 +1,20 @@
+services:
+  app:
+    build: .
+    container_name: lego-colorblind
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - ./public:/var/www/app/public:ro
+      - ./server:/var/www/app/server:ro
+      - ./data:/var/www/app/data:ro
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    container_name: tunnel
+    restart: unless-stopped
+    depends_on:
+      - app
+    command: tunnel run --token ${TUNNEL_TOKEN}
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
