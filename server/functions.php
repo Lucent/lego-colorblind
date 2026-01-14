@@ -234,8 +234,8 @@ function set_progress($id, $value) {
 
 function flush_output() {
 	$junk = "<!-- long string to flush output buffer -->";
-	echo str_repeat($junk, 4096 / strlen($junk)), "\n";
-	ob_end_flush(); flush();
+	echo str_repeat($junk, (int)(4096 / strlen($junk))), "\n";
+	@ob_end_flush(); flush();
 }
 
 function curl_get_contents($url, $opts) {

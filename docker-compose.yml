@@ -11,7 +11,7 @@ services:
 
   tunnel:
     image: cloudflare/cloudflared:latest
-    container_name: tunnel
+    container_name: tunnel-colorblind
     restart: unless-stopped
     depends_on:
       - app

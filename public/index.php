@@ -15,7 +15,8 @@ require_once "../server/color_difference.class.php";
 require_once "../server/rebrick_colors_to_array.php";
 require_once "../server/color-blind.php";
 require_once "../server/functions.php";
-require_once "../apikey.php";
+
+$api_key = getenv('REBRICKABLE_API_KEY');
 
 $darken_factor = 0;
 if (array_key_exists("lighting", $_GET))
@@ -82,6 +83,8 @@ foreach ($sets as $single_set) {
 	} else foreach ($single_set["results"] as $part) {
 		unset($part["part"]["external_ids"]);
 		unset($part["color"]["external_ids"]);
+		if ($part["element_id"] === null)
+			continue;
 		if ($part["is_spare"] != 1) {
 			if (array_key_exists($part["element_id"], $parts_byelement))
 				$parts_byelement[$part["element_id"]]["quantity"] += $part["quantity"];
