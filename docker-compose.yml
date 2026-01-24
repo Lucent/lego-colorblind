@@ -5,9 +5,9 @@ services:
     restart: unless-stopped
     env_file: .env
     volumes:
-      - ./public:/var/www/app/public:ro
-      - ./server:/var/www/app/server:ro
-      - ./data:/var/www/app/data:ro
+      - ./public:/var/www/html:ro
+      - ./server:/var/www/server:ro
+      - ./data:/var/www/data:ro
 
   tunnel:
     image: cloudflare/cloudflared:latest

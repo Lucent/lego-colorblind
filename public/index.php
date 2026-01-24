@@ -138,7 +138,7 @@ set_progress("Progress", 100);
 $view = "parts";
 if ($get_sets == []) { ?>
 	<p>Does colorblindness make it difficult to see whether parts in a set are actually different colors?<br><br>
-	Enter a set name or number to see a list of parts (and their count) in colors similar enough to be confusing for the selected color deficiency. <a href="/set=10197-1">Try a sample</a>.</p>
+	Enter a set name or number to see a list of parts (and their count) in colors similar enough to be confusing for the selected color deficiency. <a href="/?set=10197-1">Try a sample</a>.</p>
 <?php
 } else if (array_key_exists("view", $_GET) && $_GET["view"] === "colors")
 	show_similar_colors($parts_bycolor, $similar_color_bank);
