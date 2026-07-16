@@ -7,23 +7,28 @@ body		{ background-color: rgb(240, 243, 245); font-family: -apple-system, BlinkM
 aside		{ background-color: white; padding: 2rem; margin: auto; display: inline-block; margin: 1rem; }
 h1			{ font-weight: normal; margin-top: 0; font-size: 2.5em; letter-spacing: -0.04em; margin-bottom: 0; }
 h1, h3, big	{ color: #600; }
-form input	{ background-color: rgb(240, 243, 245); border-radius: 3px; border: thin solid #CCC; font-size: 2em; width: 100%; padding: 0.5rem 1rem; }
-.awesomplete{ margin: 2rem 0; }
+form input[type=search]	{ background-color: rgb(240, 243, 245); border-radius: 3px; border: thin solid #CCC; font-size: 2em; width: 100%; padding: 0.5rem 1rem; }
+form > div	{ margin: 2rem 0; }
+input[type=range]	{ accent-color: darkred; vertical-align: middle; width: 11em; }
 p			{ font-size: 1.4em; color: #888; }
 p > select	{ font-size: inherit; border: none; border-bottom: medium solid #333; }
 button		{ float: right; text-transform: uppercase; border-radius: 6px; background-color: darkred; color: white; border: none; padding: 1em 1.5em; margin-top: 1em; letter-spacing: 0.2em; }
 button:focus,
 button:hover{ background-color: #B00; }
 h4			{ margin: 1rem; font-size: x-large; background-color: white; padding: 1rem 2rem; display: inline-block; color: darkred; font-weight: normal; border-radius: 1em; background-color: #fee; }
-progress, body > p	{ width: 35.75rem; margin-left: 1rem; }
-body > p	{ margin-left: 2rem; }
+progress, #Message p	{ width: 35.75rem; margin-left: 1rem; }
+#Message p	{ margin-left: 2rem; }
+progress[hidden]	{ display: none; }
+main		{ display: flex; flex-direction: column; align-items: flex-start; }
 h2			{ width: 21em; background-color: white; padding: 2rem; margin: 1rem; display: flex; align-items: center; margin-bottom: 2rem; }
 h2 img		{ margin-right: 1ex; width: 10em; }
 h2 big		{ font-size: 3rem; }
 h3			{ font-size: large; font-weight: normal; margin-top: 1rem; margin-left: 1rem; margin-bottom: 0; display: inline-block; border-bottom: medium solid var(--bordercolor); border-right: medium solid var(--bordercolor); padding: 0.2rem 0.5rem 0.2rem 0.5rem; }
 article		{ margin: 0.5rem; border-left: medium solid var(--bordercolor); margin: 0 0 0 1rem; padding: 0.5rem 0 0.5rem 0.5rem; }
-section		{ padding: 1ex; background-color: white; margin: 0.5rem; display: inline-block; border-radius: 3px; }
+section		{ padding: 1ex; background-color: white; margin: 0.5rem; display: inline-block; border-radius: 3px; position: relative; }
+section::after	{ content: attr(data-de); position: absolute; top: 2px; right: 6px; font-size: x-small; color: #c9a; }
 figure		{ display: inline-block; margin: 1ex; }
+.swatch		{ display: inline-block; width: 0.9em; height: 0.9em; border-radius: 50%; border: 1px solid rgba(0,0,0,0.25); vertical-align: -0.1em; }
 figcaption	{ font-size: small; margin-top: 1ex; text-align: center; }
 figure img	{ height: 6em; vertical-align: middle; }
 form		{ display: inline; }

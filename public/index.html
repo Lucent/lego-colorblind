@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+ <head>
+  <title>Find Similar Color Lego Parts for Colorblindness</title>
+  <link href="css/screen-default.css" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script type="module" src="client/app.mjs"></script>
+  <script defer data-domain="color.brick.design" src="https://plausible.io/js/script.js"></script>
+ </head>
+ <body>
+<aside>
+<h1>Find similar color parts in set</h1>
+<form method="get" action=".">
+ <div><input type="search" name="set" id="Set" placeholder="set name or number" autocomplete="off" list="Sets">
+  <datalist id="Sets"></datalist></div>
+ <p><label for="Blindness">viewed with</label>
+ <select name="type" id="Blindness">
+  <option value="normal">normal vision</option>
+  <option value="deutan" selected>deuteranopia (red-green)</option>
+  <option value="protan">protanopia (red-green)</option>
+  <option value="tritan">tritanopia (blue-yellow)</option>
+  <option value="achromat">achromatopsia (gray)</option>
+ </select>
+ <label>under</label>
+ <select name="lighting" id="Lighting"><option value="0">normal</option><option value="50">dim</option></select>
+ <label for="Lighting">light</label></p>
+ <p><label for="Severity">severity</label>
+ <input type="range" name="severity" id="Severity" min="0" max="100" value="60">
+ <output for="Severity" id="SeverityOut">60%</output></p>
+ <button type="submit">Show similar parts</button>
+</form>
+</aside>
+<br><progress id="Progress" max="100" hidden></progress>
+<div id="Headers"></div>
+<div id="Message"></div>
+<main id="Results"></main>
+<footer>
+<addr>Created by <a href="//dayah.com">Michael Dayah</a>. Contact color at brick.design.<br>Parts retrieved from <a href="https://rebrickable.com/api/">Rebrickable API</a>. Colorblindness simulation from <a href="https://daltonlens.org">DaltonLens</a>. Browser testing done with <a href="https://www.browserstack.com/"><img src="browserstack.svg" style="height: 2em;" alt="BrowserStack"></a></addr>
+</footer>
+ </body>
+</html>

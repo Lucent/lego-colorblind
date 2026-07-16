@@ -1,17 +1,38 @@
+x-logging: &logging
+  driver: local
+  options:
+    max-size: 100m
+    max-file: 5
+
+x-hardened: &hardened
+  read_only: true
+  security_opt:
+    - no-new-privileges:true
+  cap_drop:
+    - ALL
+  tmpfs:
+    - /tmp
+  logging: *logging
+
 services:
-  app:
-    build: .
-    container_name: lego-colorblind
+  app:                          # stock node + mounted code, no image build; only ./cache is writable
+    <<: *hardened
+    image: node:alpine
     restart: unless-stopped
+    user: "1000:1000"
+    working_dir: /app
+    command: ["node", "server/server.mjs"]
     env_file: .env
+    environment:
+      - PORT=80                 # the tunnel's ingress targets app:80 (unprivileged low ports are fine in a container netns)
     volumes:
-      - ./public:/var/www/html:ro
-      - ./server:/var/www/server:ro
-      - ./data:/var/www/data:ro
+      - ./server:/app/server:ro
+      - ./public:/app/public:ro
+      - ./cache:/app/cache
 
   tunnel:
+    <<: *hardened
     image: cloudflare/cloudflared:latest
-    container_name: tunnel-colorblind
     restart: unless-stopped
     depends_on:
       - app
